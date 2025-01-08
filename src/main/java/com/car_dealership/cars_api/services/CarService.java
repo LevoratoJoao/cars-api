@@ -2,6 +2,7 @@ package com.car_dealership.cars_api.services;
 
 import com.car_dealership.cars_api.models.Car;
 import com.car_dealership.cars_api.repositories.CarRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,10 @@ import java.util.Optional;
 @RequiredArgsConstructor //don't know why lombok is not working
 public class CarService {
 
-    private final CarRepository carRepository;
+    private @NonNull CarRepository carRepository;
 
     public List<Car> getAllCars() {
-        return this.carRepository.findAll();
+        return carRepository.findAll();
     }
 
     public Car getCarById(Integer id) {
@@ -28,9 +29,9 @@ public class CarService {
     }
 
     public Car saveCar(Car car) {
-        Car savedCar = carRepository.save(car);
-        System.out.println("Car with id { " + car.getId() + " } was saved");
-        return car;
+        Car newCar = new Car(car.getCar_name(), car.getBrand(), car.getModel(), car.getRelease_year(), car.getColor(), car.getMotor(), car.getKilometers(), car.getPrice());
+        carRepository.save(newCar);
+        return newCar;
     }
 
     public void deleteCar(Integer id) {

@@ -12,10 +12,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Car {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Setter
-    @Getter
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     private String car_name;
@@ -26,4 +25,15 @@ public class Car {
     private String motor;
     private Float kilometers;
     private Float price;
+
+    public Car(String car_name, String brand, String model, Integer release_year, String color, String motor, Float kilometers, Float price) {
+        this.car_name = car_name;
+        this.brand = brand;
+        this.model = model;
+        this.release_year = release_year;
+        this.color = color;
+        this.motor = motor;
+        this.kilometers = kilometers;
+        this.price = price;
+    }
 }
