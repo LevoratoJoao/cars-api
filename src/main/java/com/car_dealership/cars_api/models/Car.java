@@ -1,22 +1,21 @@
 package com.car_dealership.cars_api.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
-@Table(name = "cars")
+@Table(name = "car")
 @Entity // Creates a table of this clas
 @Setter
 @Getter
 @ToString // @Data already creates Getter, Setter and ToString so we can use that too
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cars {
+public class Car {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Setter
+    @Getter
     private Integer id;
 
     private String car_name;
