@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS color(
+    color_id SERIAL PRIMARY KEY,
+    color_name VARCHAR(10) NOT NULL UNIQUE
+);

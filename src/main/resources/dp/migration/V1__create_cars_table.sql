@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS car(
     brand VARCHAR(50) NOT NULL,
     model VARCHAR(10) NOT NULL,
     release_year NUMERIC NOT NULL,
-    color VARCHAR(10),
     motor VARCHAR(5),
     kilometers REAL,
     price REAL NOT NULL
