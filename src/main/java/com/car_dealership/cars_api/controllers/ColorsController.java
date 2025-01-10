@@ -1,6 +1,8 @@
 package com.car_dealership.cars_api.controllers;
 
-import com.car_dealership.cars_api.models.Color;
+import com.car_dealership.cars_api.models.color.Color;
+import com.car_dealership.cars_api.models.color.ColorRequestDTO;
+import com.car_dealership.cars_api.models.color.ColorResponseDTO;
 import com.car_dealership.cars_api.services.ColorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,12 @@ public class ColorsController {
     private final ColorService colorService;
 
     @GetMapping
-    public ResponseEntity<List<Color>> get() {
+    public ResponseEntity<List<ColorResponseDTO>> get() {
         return ResponseEntity.ok().body(colorService.getAllColors());
     }
 
     @PostMapping
-    public ResponseEntity<Color> post(@RequestBody Color color) {
-        return ResponseEntity.ok().body(colorService.saveColor(color));
+    public ResponseEntity<Color> post(@RequestBody ColorRequestDTO colorRequest) {
+        return ResponseEntity.ok().body(colorService.saveColor(colorRequest));
     }
 }

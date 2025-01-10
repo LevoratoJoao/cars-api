@@ -1,4 +1,4 @@
-package com.car_dealership.cars_api.models;
+package com.car_dealership.cars_api.models.color;
 
 import com.car_dealership.cars_api.models.car.Car;
 import com.fasterxml.jackson.annotation.JsonIgnore;

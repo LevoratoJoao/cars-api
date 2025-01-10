@@ -1,11 +1,14 @@
 package com.car_dealership.cars_api.services;
 
 import com.car_dealership.cars_api.models.car.Car;
-import com.car_dealership.cars_api.models.Color;
+import com.car_dealership.cars_api.models.color.Color;
 import com.car_dealership.cars_api.models.car.CarRequestDTO;
 import com.car_dealership.cars_api.models.car.CarResponseDTO;
+import com.car_dealership.cars_api.models.color.ColorRequestDTO;
+import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
 import com.car_dealership.cars_api.repositories.CarRepository;
 import com.car_dealership.cars_api.repositories.ColorRepository;
+import com.car_dealership.cars_api.repositories.ManufacturerRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +23,8 @@ import java.util.stream.Collectors;
 public class CarService {
 
     private final ColorService colorService;
+    private final ManufacturerService manufacturerService;
     private @NonNull CarRepository carRepository;
-    private @NonNull ColorRepository colorRepository;
 
     public List<CarResponseDTO> getAllCars() {
         List<Car> allCars = carRepository.findAll();
@@ -34,39 +37,52 @@ public class CarService {
                 car.getMotor(),
                 car.getKilometers(),
                 car.getPrice(),
-                car.getColors().stream().map( Color::getColor_name ).collect(Collectors.toSet())) // Adds only the name
+                car.getManufacturer(),
+                car.getColors()
+                        .stream()
+                        .map( Color::getColor_name )
+                        .collect(Collectors.toSet())) // Adds only the name
         ).toList();
     }
 
     public Car getCarById(Integer id) {
-        Optional<Car> optionalCar = carRepository.findById(id);
-        if (optionalCar.isPresent()) {
-            return optionalCar.get();
+        Optional<Car> carExists = carRepository.findById(id);
+        if (carExists.isPresent()) {
+            return carExists.get();
         }
         System.out.println("Car with id { " + id + " } was not found");
         return null;
     }
 
     public Car saveCar(CarRequestDTO carRequest) {
-        Set<Color> colors = carRequest.colors().stream().map(color -> colorRepository
-            .findColorByColorName(color)
+        Set<Color> colors = carRequest.colors().stream().map(color -> colorService
+            .getColorRepository()
+            .findByColorName(color)
             .orElseGet(() -> {
-                Color newColor = colorService.saveColor(new Color(color));
+                Color newColor = colorService.saveColor(new ColorRequestDTO(color));
                 System.out.println("New color was added: " + newColor.getColor_name());
                 return newColor;
             })).collect(Collectors.toSet());
-        Car newCar = new Car(
-                carRequest.car_name(),
-                carRequest.brand(),
-                carRequest.model(),
-                carRequest.release_year(),
-                carRequest.motor(),
-                carRequest.kilometers(),
-                carRequest.price(),
-                colors
-        );
-        carRepository.save(newCar);
-        return newCar;
+        ManufacturerRepository.
+        Optional<Car> carExists = carRepository.findByCarName(carRequest.car_name());
+        if (carExists.isEmpty()) {
+            Car newCar = new Car(
+                    carRequest.car_name(),
+                    carRequest.brand(),
+                    carRequest.model(),
+                    carRequest.release_year(),
+                    carRequest.motor(),
+                    carRequest.kilometers(),
+                    carRequest.price(),
+                    carRequest.manufacturer(),
+                    colors
+            );
+            carRepository.save(newCar);
+            return newCar;
+        }
+        carExists.get().setColors(colors);
+        carRepository.save(carExists.get());
+        return carExists.get();
     }
 
     public Car updateCar(Car car) {

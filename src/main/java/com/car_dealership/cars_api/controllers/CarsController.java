@@ -32,8 +32,8 @@ public class CarsController {
     }
 
     @PutMapping
-    public ResponseEntity<Car> put(@RequestBody Car car) {
-        return ResponseEntity.ok().body(carService.updateCar(car));
+    public ResponseEntity<Car> put(@RequestBody Car carRequest) {
+        return ResponseEntity.ok().body(carService.updateCar(carRequest));
     }
 
     @DeleteMapping("/{id}")
