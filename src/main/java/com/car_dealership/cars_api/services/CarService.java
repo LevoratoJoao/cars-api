@@ -6,9 +6,8 @@ import com.car_dealership.cars_api.models.car.CarRequestDTO;
 import com.car_dealership.cars_api.models.car.CarResponseDTO;
 import com.car_dealership.cars_api.models.color.ColorRequestDTO;
 import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
+import com.car_dealership.cars_api.models.manufacturer.ManufacturerRequestDTO;
 import com.car_dealership.cars_api.repositories.CarRepository;
-import com.car_dealership.cars_api.repositories.ColorRepository;
-import com.car_dealership.cars_api.repositories.ManufacturerRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,32 +25,48 @@ public class CarService {
     private final ManufacturerService manufacturerService;
     private @NonNull CarRepository carRepository;
 
-    public List<CarResponseDTO> getAllCars() {
-        List<Car> allCars = carRepository.findAll();
-        return allCars.stream().map(car -> new CarResponseDTO(
+    public CarResponseDTO createNewCarResponse(Car car) {
+        return new CarResponseDTO(
                 car.getCar_id(),
                 car.getCar_name(),
-                car.getBrand(),
                 car.getModel(),
                 car.getRelease_year(),
                 car.getMotor(),
                 car.getKilometers(),
                 car.getPrice(),
-                car.getManufacturer(),
+                new ManufacturerRequestDTO(car.getManufacturer().getManufacturer_name(), car.getManufacturer().getCountry()),
                 car.getColors()
                         .stream()
                         .map( Color::getColor_name )
-                        .collect(Collectors.toSet())) // Adds only the name
+                        .collect(Collectors.toSet())
+        );
+    }
+
+    public List<CarResponseDTO> getAllCars() {
+        List<Car> allCars = carRepository.findAll();
+        return allCars.stream().map(this::createNewCarResponse
         ).toList();
     }
 
-    public Car getCarById(Integer id) {
+    public CarResponseDTO getCarById(Integer id) {
         Optional<Car> carExists = carRepository.findById(id);
         if (carExists.isPresent()) {
-            return carExists.get();
+            return createNewCarResponse(carExists.get());
         }
         System.out.println("Car with id { " + id + " } was not found");
         return null;
+    }
+
+    public Manufacturer getManufacturerOrCreate(CarRequestDTO carRequest) {
+        return manufacturerService.
+                getManufacturerRepository()
+                .findByManName(carRequest.manufacturer().man_name()).orElseGet(() -> manufacturerService.saveManufacturer(
+                        new ManufacturerRequestDTO(
+                                carRequest.manufacturer().man_name(),
+                                carRequest.manufacturer().country()
+                        )
+                )
+        );
     }
 
     public Car saveCar(CarRequestDTO carRequest) {
@@ -63,18 +78,16 @@ public class CarService {
                 System.out.println("New color was added: " + newColor.getColor_name());
                 return newColor;
             })).collect(Collectors.toSet());
-        ManufacturerRepository.
         Optional<Car> carExists = carRepository.findByCarName(carRequest.car_name());
         if (carExists.isEmpty()) {
             Car newCar = new Car(
                     carRequest.car_name(),
-                    carRequest.brand(),
                     carRequest.model(),
                     carRequest.release_year(),
                     carRequest.motor(),
                     carRequest.kilometers(),
                     carRequest.price(),
-                    carRequest.manufacturer(),
+                    getManufacturerOrCreate(carRequest),
                     colors
             );
             carRepository.save(newCar);
@@ -86,6 +99,7 @@ public class CarService {
     }
 
     public Car updateCar(Car car) {
+        System.out.println(car.toString());
         return carRepository.save(car);
     }
 

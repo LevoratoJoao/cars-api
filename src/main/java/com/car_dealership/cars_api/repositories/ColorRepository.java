@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface ColorRepository extends JpaRepository<Color, Integer> {
     @Query(value = "SELECT * FROM Color c WHERE c.color_name = :color_name", nativeQuery = true)
-   Optional<Color> findByColorName(@Param("color_name") String color_name);
+    Optional<Color> findByColorName(@Param("color_name") String color_name);
 }

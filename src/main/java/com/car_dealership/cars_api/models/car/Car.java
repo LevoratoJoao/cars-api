@@ -22,7 +22,6 @@ public class Car {
     private Integer car_id;
 
     private String car_name;
-    private String brand;
     private String model;
     private Integer release_year;
     private String motor;
@@ -40,9 +39,8 @@ public class Car {
             inverseJoinColumns = @JoinColumn(name = "color_id"))
     private Set<Color> colors = new HashSet<>();
 
-    public Car(String car_name, String brand, String model, Integer release_year, String motor, Float kilometers, Float price, Manufacturer manufacturer, Set<Color> colors) {
+    public Car(String car_name, String model, Integer release_year, String motor, Float kilometers, Float price, Manufacturer manufacturer, Set<Color> colors) {
         this.car_name = car_name;
-        this.brand = brand;
         this.model = model;
         this.release_year = release_year;
         this.motor = motor;

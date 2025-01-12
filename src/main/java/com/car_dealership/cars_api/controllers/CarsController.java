@@ -22,7 +22,7 @@ public class CarsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Car> get(@PathVariable Integer id) {
+    public ResponseEntity<CarResponseDTO> get(@PathVariable Integer id) {
         return ResponseEntity.ok().body(carService.getCarById(id));
     }
 

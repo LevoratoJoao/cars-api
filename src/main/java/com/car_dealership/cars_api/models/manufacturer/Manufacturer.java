@@ -17,16 +17,16 @@ public class Manufacturer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer man_id;
+    private Integer manufacturer_id;
 
-    private String man_name;
+    private String manufacturer_name;
     private String country;
 
     @OneToMany(mappedBy = "manufacturer")
     private List<Car> cars;
 
     public Manufacturer(String man_name, String country) {
-        this.man_name = man_name;
+        this.manufacturer_name = man_name;
         this.country = country;
     }
 }

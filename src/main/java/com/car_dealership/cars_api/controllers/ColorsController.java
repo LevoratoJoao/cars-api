@@ -22,6 +22,11 @@ public class ColorsController {
         return ResponseEntity.ok().body(colorService.getAllColors());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ColorResponseDTO> get(@PathVariable Integer id) {
+        return ResponseEntity.ok().body(colorService.getColorById(id));
+    }
+
     @PostMapping
     public ResponseEntity<Color> post(@RequestBody ColorRequestDTO colorRequest) {
         return ResponseEntity.ok().body(colorService.saveColor(colorRequest));
