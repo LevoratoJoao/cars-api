@@ -11,7 +11,6 @@ import com.car_dealership.cars_api.repositories.CarRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -115,8 +114,9 @@ public class CarService {
                                                       Integer release_year,
                                                       Float min_price,
                                                       Float max_price,
-                                                      String color) {
-        List<Car> cars = carRepository.findFilteredCars(manufacturer, model, motor, release_year, min_price, max_price, color);
+                                                      String color,
+                                                      String car) {
+        List<Car> cars = carRepository.findFilteredCars(manufacturer, model, motor, release_year, min_price, max_price, color, car);
         return cars.stream().map(this::createNewCarResponse).toList();
     }
 }

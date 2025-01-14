@@ -31,7 +31,8 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
                    "and (:motor = '' or c.motor like :motor)" +
                    "and (:release_year = 0 or c.release_year = :release_year)" +
                    "and (c.price >= :min_price and c.price <= :max_price)" +
-                   "and (:color = '' or cl.color_name like :color)"
+                   "and (:color = '' or cl.color_name like :color)" +
+                   "and (:car_name = '' or c.car_name like :car_name)"
             , nativeQuery = true)
     List<Car> findFilteredCars(@Param("manufacturer_name") String manufacturer_name,
                                @Param("model") String model,
@@ -39,6 +40,7 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
                                @Param("release_year") Integer release_year,
                                @Param("min_price") Float min_price,
                                @Param("max_price") Float max_price,
-                               @Param("color") String color
+                               @Param("color") String color,
+                               @Param("car_name") String car_name
     );
 }

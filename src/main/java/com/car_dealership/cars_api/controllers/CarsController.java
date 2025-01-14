@@ -50,7 +50,8 @@ public class CarsController {
                                                                       @RequestParam(defaultValue = "0") Integer release_year,
                                                                       @RequestParam(defaultValue = "0") Float min_price,
                                                                       @RequestParam(defaultValue = "10000000") Float max_price,
-                                                                      @RequestParam(defaultValue = "") String color) {
-        return ResponseEntity.ok().body(carService.getFilteredCars(manufacturer, model, motor, release_year, min_price, max_price, color));
+                                                                      @RequestParam(defaultValue = "") String color,
+                                                                      @RequestParam(defaultValue = "") String car) {
+        return ResponseEntity.ok().body(carService.getFilteredCars(manufacturer, model, motor, release_year, min_price, max_price, color, car));
     }
 }
