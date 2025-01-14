@@ -10,6 +10,7 @@ import com.car_dealership.cars_api.models.manufacturer.ManufacturerRequestDTO;
 import com.car_dealership.cars_api.repositories.CarRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class CarService {
         );
     }
 
+    @Cacheable("cars")
     public List<CarResponseDTO> getAllCars() {
         List<Car> allCars = carRepository.findAll();
         return allCars.stream().map(this::createNewCarResponse).toList();
