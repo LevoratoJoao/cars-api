@@ -11,6 +11,7 @@ import com.car_dealership.cars_api.repositories.CarRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +45,7 @@ public class CarService {
 
     public List<CarResponseDTO> getAllCars() {
         List<Car> allCars = carRepository.findAll();
-        return allCars.stream().map(this::createNewCarResponse
-        ).toList();
+        return allCars.stream().map(this::createNewCarResponse).toList();
     }
 
     public CarResponseDTO getCarById(Integer id) {
@@ -60,13 +60,15 @@ public class CarService {
     public Manufacturer getManufacturerOrCreate(CarRequestDTO carRequest) {
         return manufacturerService.
                 getManufacturerRepository()
-                .findByManName(carRequest.manufacturer().man_name()).orElseGet(() -> manufacturerService.saveManufacturer(
-                        new ManufacturerRequestDTO(
-                                carRequest.manufacturer().man_name(),
-                                carRequest.manufacturer().country()
-                        )
-                )
-        );
+                .findByManName(carRequest.manufacturer().man_name())
+                .orElseGet(() -> {
+                    Manufacturer newManufacturer = manufacturerService.saveManufacturer(new ManufacturerRequestDTO(
+                            carRequest.manufacturer().man_name(),
+                            carRequest.manufacturer().country()
+                    ));
+                    System.out.println("New manufacturer was added: " + newManufacturer.getManufacturer_name());
+                    return newManufacturer;
+                });
     }
 
     public Car saveCar(CarRequestDTO carRequest) {
@@ -105,5 +107,16 @@ public class CarService {
 
     public void deleteCar(Integer id) {
         carRepository.deleteById(id);
+    }
+
+    public List<CarResponseDTO> getFilteredCars(String manufacturer,
+                                                      String model,
+                                                      String motor,
+                                                      Integer release_year,
+                                                      Float min_price,
+                                                      Float max_price,
+                                                      String color) {
+        List<Car> cars = carRepository.findFilteredCars(manufacturer, model, motor, release_year, min_price, max_price, color);
+        return cars.stream().map(this::createNewCarResponse).toList();
     }
 }

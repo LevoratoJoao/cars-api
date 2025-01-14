@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface ManufacturerRepository extends JpaRepository<Manufacturer, Integer> {
-    @Query(value = "SELECT * FROM Manufacturer m WHERE m.man_name = :man_name", nativeQuery = true)
-    Optional<Manufacturer> findByManName(@Param("man_name") String man_name);
+    @Query(value = "SELECT * FROM Manufacturer m WHERE m.manufacturer_name = :manufacturer_name", nativeQuery = true)
+    Optional<Manufacturer> findByManName(@Param("manufacturer_name") String manufacturer_name);
 }

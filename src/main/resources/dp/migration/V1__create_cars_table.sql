@@ -6,11 +6,12 @@ CREATE TABLE IF NOT EXISTS car(
     motor VARCHAR(5),
     kilometers REAL,
     price REAL NOT NULL,
-    man_id INT REFERENCES manufacturer(man_id)
+    manufacturer_id INT,
+    FOREIGN KEY (manufacturer_id) REFERENCES manufacturer(manufacturer_id)
 );
 
 CREATE TABLE IF NOT EXISTS manufacturer (
-    man_id SERIAL PRIMARY KEY,
-    man_name VARCHAR(100) NOT NULL,
+    manufacturer_id SERIAL PRIMARY KEY,
+    manufacturer_name VARCHAR(100) NOT NULL,
     country VARCHAR(50)
 );
