@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Car } from '../../interfaces/car';
-import { CarService } from '../../services/car.service';
+import { CarService } from '../../services/car/car.service';
 
 @Component({
   selector: 'app-car',
