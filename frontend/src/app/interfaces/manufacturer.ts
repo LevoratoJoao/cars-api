@@ -1,5 +1,5 @@
 export interface Manufacturer {
-    id: number,
-    name: string,
-    country: string
+    man_id: number,
+    man_name: string,
+    man_country: string
 }

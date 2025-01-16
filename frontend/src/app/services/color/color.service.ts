@@ -1,18 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Manufacturer } from '../../interfaces/manufacturer';
+import { Color } from '../../interfaces/color';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ManufacturerService {
+export class ColorService {
   readonly API_URL = "http://localhost:8080";
 
   constructor(private http: HttpClient) { }
 
-  getAllManufacturers(): Observable<Manufacturer[]> {
-    const data = this.http.get<Manufacturer[]>(this.API_URL + "/api/v1/manufacturers");
+  getAllColors(): Observable<Color[]> {
+    const data = this.http.get<Color[]>(this.API_URL + "/api/v1/colors");
     return data;
   }
 }

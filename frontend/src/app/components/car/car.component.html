@@ -1,8 +1,71 @@
-<p>car works!</p>
-<p>Getting cars</p>
+<h1 id="main-tittle">Cars available:</h1>
+
+<div id="filter" class="border border-secondary rounded">
+    <div class="container text-center">
+        <div class="row justify-content-start">
+            <div class="col">
+                Filter by
+            </div>
+            <div class="col">
+                <p>Manufacturer</p>
+                <select class="form-select" [(ngModel)]="selectedManu">
+                    <option value="">Any</option>
+                    <option *ngFor="let manu of manuList" [ngValue]="manu.man_name">{{manu.man_name}}</option>
+                </select>
+            </div>
+            <div class="col">
+                <p>Color</p>
+                <select class="form-select" [(ngModel)]="selectedColor">
+                    <option value="">Any</option>
+                    <option *ngFor="let color of colorList" [ngValue]="color.name">{{color.name}}</option>
+                </select>
+            </div>
+            <div class="col">
+                <p>Model</p>
+                <select class="form-select" [(ngModel)]="selectedModel">
+                    <option value="">Any</option>
+                    <option value="Hatch">Hatch</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="SUV">SUV</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <p>Min price:</p>
+                <input [(ngModel)]="minPrice" type="number" id="min-price" class="form-control" placeholder="0">
+            </div>
+
+            <div class="col">
+                <p>Max price:</p>
+                <input [(ngModel)]="maxPrice" type="number" id="max-price" class="form-control" placeholder="100000">
+            </div>
+
+            <div class="col">
+                <button type="button" id="apply-filter" class="btn btn-primary" (click)="applyFilter()">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <section class="car-list">
     <div class="car" *ngFor="let car of carsList">
-        <p>{{ car }}</p>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card text-center h-100">
+                    <!-- <img src="..." class="card-img-top" alt="..."> -->
+                    <div class="card-body">
+                        <h5 class="card-title">{{ car.manufacturer.man_name }} {{ car.car_name }} {{ car.motor }} {{ car.release_year }}</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Model: {{ car.model }}</li>
+                        <li class="list-group-item">{{ car.price }}</li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="#" class="card-link">More details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
