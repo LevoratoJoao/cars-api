@@ -19,7 +19,8 @@ public class CarsController {
 
     @GetMapping
     public ResponseEntity<List<CarResponseDTO>> getAllCars() {
-        return ResponseEntity.ok().body(carService.getAllCars());
+        List<CarResponseDTO> allCars = carService.getAllCars();
+        return ResponseEntity.ok().body(allCars);
     }
 
     @GetMapping("/{id}")

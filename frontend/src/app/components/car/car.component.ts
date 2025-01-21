@@ -7,10 +7,11 @@ import { Manufacturer } from '../../interfaces/manufacturer';
 import { ColorService } from '../../services/color/color.service';
 import { ManufacturerService } from '../../services/manufacturer/manufacturer.service';
 import { FormsModule } from '@angular/forms';
+import { CarDetailsComponent } from "../car-details/car-details.component";
 
 @Component({
   selector: 'app-car',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CarDetailsComponent],
   templateUrl: './car.component.html',
   styleUrl: './car.component.css'
 })
@@ -25,6 +26,7 @@ export class CarComponent {
   selectedModel: string = "";
   minPrice: number = 0;
   maxPrice: number = 99999999;
+  carName: string = "";
 
   constructor(private carService: CarService, private manuService: ManufacturerService, private colorService: ColorService) { }
 
@@ -49,7 +51,7 @@ export class CarComponent {
   applyFilter() {
     this.minPrice = this.minPrice === null ? 0 : this.minPrice;
     this.maxPrice = this.maxPrice === null ? 9999999 : this.maxPrice;
-    this.carService.getFilteredCars(this.selectedManu, this.selectedColor, this.selectedModel, this.minPrice, this.maxPrice).subscribe(
+    this.carService.getFilteredCars(this.selectedManu, this.selectedColor, this.selectedModel, this.minPrice, this.maxPrice, this.carName).subscribe(
       (filteredList: Car[]) => {
         this.carsList = filteredList;
       }

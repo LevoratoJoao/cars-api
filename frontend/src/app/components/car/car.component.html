@@ -1,6 +1,6 @@
 <h1 id="main-tittle">Cars available:</h1>
 
-<div id="filter" class="border border-secondary rounded">
+<div id="filter" class="h4 pb-2 mb-4 text-danger border-bottom border-danger"> <!-- class="border border-secondary rounded" -->
     <div class="container text-center">
         <div class="row justify-content-start">
             <div class="col">
@@ -39,6 +39,10 @@
                 <p>Max price:</p>
                 <input [(ngModel)]="maxPrice" type="number" id="max-price" class="form-control" placeholder="100000">
             </div>
+            <div class="col">
+                <p>Name:</p>
+                <input [(ngModel)]="carName" type="text" id="car-name" class="form-control" placeholder="Name">
+            </div>
 
             <div class="col">
                 <button type="button" id="apply-filter" class="btn btn-primary" (click)="applyFilter()">Apply</button>
@@ -47,23 +51,15 @@
     </div>
 </div>
 
-
 <section class="car-list">
-    <div class="car" *ngFor="let car of carsList">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="container">
+        <div class="row">
             <div class="col">
-                <div class="card text-center h-100">
-                    <!-- <img src="..." class="card-img-top" alt="..."> -->
-                    <div class="card-body">
-                        <h5 class="card-title">{{ car.manufacturer.man_name }} {{ car.car_name }} {{ car.motor }} {{ car.release_year }}</h5>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Model: {{ car.model }}</li>
-                        <li class="list-group-item">{{ car.price }}</li>
-                    </ul>
-                    <div class="card-body">
-                        <a href="#" class="card-link">More details</a>
-                    </div>
+                <h3>Cars</h3>
+                <div class="list-group">
+                    <app-car-details *ngFor="let car of carsList"
+                        [car]="car">
+                    </app-car-details>
                 </div>
             </div>
         </div>
