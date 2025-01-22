@@ -11,6 +11,9 @@ import com.car_dealership.cars_api.repositories.CarRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,8 +47,9 @@ public class CarService {
     }
 
     @Cacheable("cars")
-    public List<CarResponseDTO> getAllCars() {
-        List<Car> allCars = carRepository.findAll();
+    public List<CarResponseDTO> getAllCars(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Car> allCars = carRepository.findAll(pageable);
         return allCars.stream().map(this::createNewCarResponse).toList();
     }
 

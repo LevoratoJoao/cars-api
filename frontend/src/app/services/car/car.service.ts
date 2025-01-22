@@ -11,9 +11,9 @@ export class CarService {
 
   constructor(private http: HttpClient) { }
 
-  getAllCars(): Observable<Car[]> {
+  getAllCars(page: number, size: number): Observable<Car[]> {
     //const token = localStorage.getItem('token')!; duknow how to do this :/
-    const data = this.http.get<Car[]>(this.API_URL + "/api/v1/cars");
+    const data = this.http.get<Car[]>(this.API_URL + "/api/v1/cars?page=" + page + "&size=" + size);
     return data ?? [];
   }
 

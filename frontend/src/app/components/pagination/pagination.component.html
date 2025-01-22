@@ -1,0 +1,39 @@
+<!-- <div class="pagination"> -->
+    <!-- <button >Previous</button>
+
+    <button >Next</button> -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-end">
+          <li class="page-item">
+            <div *ngIf="currentPage === 0; else previous">
+                <button class="page-link disabled"  (click)="changePage(currentPage - 1)" aria-label="Previous">
+                    Previous
+                </button>
+            </div>
+            <ng-template #previous>
+                <button class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+                    Previous
+                </button>
+            </ng-template>
+          </li>
+          <li class="page-item">
+            <select class="form-select">
+                <option *ngFor="let page of pageNumbers" [value]="page" (click)="goToPage($event)">{{ page }}</option>
+            </select>
+
+          </li>
+          <li class="page-item">
+            <div *ngIf="currentPage === totalPages; else next">
+                <button class="page-link disabled"  (click)="changePage(currentPage + 1)" aria-label="Previous">
+                    Next
+                </button>
+            </div>
+            <ng-template #next>
+                <button class="page-link" (click)="changePage(currentPage + 1)" aria-label="Previous">
+                    Next
+                </button>
+            </ng-template>
+          </li>
+        </ul>
+    </nav>
+<!-- </div> -->

@@ -8,10 +8,11 @@ import { ColorService } from '../../services/color/color.service';
 import { ManufacturerService } from '../../services/manufacturer/manufacturer.service';
 import { FormsModule } from '@angular/forms';
 import { CarDetailsComponent } from "../car-details/car-details.component";
+import { PaginationComponent } from "../pagination/pagination.component";
 
 @Component({
   selector: 'app-car',
-  imports: [CommonModule, FormsModule, CarDetailsComponent],
+  imports: [CommonModule, FormsModule, CarDetailsComponent, PaginationComponent],
   templateUrl: './car.component.html',
   styleUrl: './car.component.css'
 })
@@ -28,12 +29,18 @@ export class CarComponent {
   maxPrice: number = 99999999;
   carName: string = "";
 
+  paginatedData: any[] = [];
+  currentPage: number = 0;
+  sizeOfPage: number = 2;
+  totalItems: number = 0;
+
   constructor(private carService: CarService, private manuService: ManufacturerService, private colorService: ColorService) { }
 
   ngOnInit(): void {
-    this.carService.getAllCars().subscribe(
+    this.carService.getAllCars(this.currentPage, this.sizeOfPage).subscribe(
       (carsList: Car[]) => {
         this._carsList = carsList;
+        this.totalItems = carsList.length;
       }
     );
     this.manuService.getAllManufacturers().subscribe(
@@ -48,7 +55,15 @@ export class CarComponent {
     );
   }
 
-  applyFilter() {
+  fetchData(): void {
+    this.carService.getAllCars(this.currentPage, this.sizeOfPage).subscribe(
+      (carsList: Car[]) => {
+        this._carsList = carsList;
+      }
+    );
+  }
+
+  applyFilter(): void {
     this.minPrice = this.minPrice === null ? 0 : this.minPrice;
     this.maxPrice = this.maxPrice === null ? 9999999 : this.maxPrice;
     this.carService.getFilteredCars(this.selectedManu, this.selectedColor, this.selectedModel, this.minPrice, this.maxPrice, this.carName).subscribe(
@@ -58,6 +73,42 @@ export class CarComponent {
     );
     console.log(this._carsList);
   }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.fetchData();
+  }
+
+  // goToPreviousPage(): void {
+  //   if (this.currentPage > 0) {
+  //     this.currentPage--;
+  //     this.fetchData();
+  //   }
+  // }
+
+  // goToNextPage(): void {
+  //   if (this.currentPage < this.totalPages) {
+  //     this.currentPage++;
+  //     this.fetchData();
+  //   }
+  // }
+
+  // goToPage(event: Event): void {
+  //   const page = event.target as HTMLInputElement;
+  //   const pageNumber = parseInt(page.value, 10);
+  //   if (pageNumber && pageNumber >= 1 && pageNumber <= this.totalPages && pageNumber !== this.currentPage) {
+  //     this.currentPage = pageNumber;
+  //     this.fetchData();
+  //   }
+  // }
+
+  // get pageNumbers(): number[] {
+  //   return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  // }
+
+  // get totalPages(): number {
+  //   return Math.ceil(this.totalItems / this.sizeOfPage);
+  // }
 
   public get carsList(): Car[] {
     return this._carsList;
