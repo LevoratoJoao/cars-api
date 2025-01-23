@@ -5,7 +5,7 @@ import com.car_dealership.cars_api.models.car.CarRequestDTO;
 import com.car_dealership.cars_api.models.car.CarResponseDTO;
 import com.car_dealership.cars_api.services.CarService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +18,8 @@ public class CarsController {
     private final CarService carService;
 
     @GetMapping
-    public ResponseEntity<List<CarResponseDTO>> getAllCars(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        List<CarResponseDTO> allCars = carService.getAllCars(page, size);
+    public ResponseEntity<List<CarResponseDTO>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        List<CarResponseDTO> allCars = carService.getAllCars(page - 1, size);
         return ResponseEntity.ok().body(allCars);
     }
 
@@ -45,14 +45,16 @@ public class CarsController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<CarResponseDTO>> getCarsByManufacturer(@RequestParam(defaultValue = "") String manufacturer,
-                                                                      @RequestParam(defaultValue = "") String model,
-                                                                      @RequestParam(defaultValue = "") String motor,
-                                                                      @RequestParam(defaultValue = "0") Integer release_year,
-                                                                      @RequestParam(defaultValue = "0") Float min_price,
-                                                                      @RequestParam(defaultValue = "10000000") Float max_price,
-                                                                      @RequestParam(defaultValue = "") String color,
-                                                                      @RequestParam(defaultValue = "") String car) {
-        return ResponseEntity.ok().body(carService.getFilteredCars(manufacturer, model, motor, release_year, min_price, max_price, color, car));
+    public ResponseEntity<List<CarResponseDTO>> getCarsByFilter(@RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(defaultValue = "") String manufacturer,
+                                                                @RequestParam(defaultValue = "") String model,
+                                                                @RequestParam(defaultValue = "") String motor,
+                                                                @RequestParam(defaultValue = "0") Integer release_year,
+                                                                @RequestParam(defaultValue = "0") Float min_price,
+                                                                @RequestParam(defaultValue = "10000000") Float max_price,
+                                                                @RequestParam(defaultValue = "") String color,
+                                                                @RequestParam(defaultValue = "") String car) {
+        return ResponseEntity.ok().body(carService.getFilteredCars(page - 1, size, manufacturer, model, motor, release_year, min_price, max_price, color, car));
     }
 }

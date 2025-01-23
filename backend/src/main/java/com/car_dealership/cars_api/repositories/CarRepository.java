@@ -1,6 +1,8 @@
 package com.car_dealership.cars_api.repositories;
 
 import com.car_dealership.cars_api.models.car.Car;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,7 +36,7 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
                    "and (:color = '' or cl.color_name like :color)" +
                    "and (:car_name = '' or c.car_name like :car_name)"
             , nativeQuery = true)
-    List<Car> findFilteredCars(@Param("manufacturer_name") String manufacturer_name,
+    Page<Car> findFilteredCars(Pageable pageable, @Param("manufacturer_name") String manufacturer_name,
                                @Param("model") String model,
                                @Param("motor") String motor,
                                @Param("release_year") Integer release_year,

@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pagination',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.css'
 })
@@ -13,34 +14,49 @@ export class PaginationComponent {
   @Input() totalItems!: number;
   @Output() pageChanged: EventEmitter<number> = new EventEmitter();
 
-  get totalPages(): number {
-    // console.log(this.totalItems + " and " + this.sizeOfPage + " division "+ Math.floor(this.totalItems / this.sizeOfPage));
-    return Math.floor(this.totalItems / this.sizeOfPage);
+
+  get getTotalPages(): number {
+    return Math.floor(this.totalItems / this.sizeOfPage) + 1;
   }
 
-  changePage(page: number): void {
-    if (page >= 0 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.pageChanged.emit(page);
+  // changePage(page: number): void {
+  //   console.log("Ta trocando para " + page);
+  //   if (page >= 1 && page <= this.getTotalPages) {
+  //     this.currentPage = page;
+  //     this.pageChanged.emit(page);
+  //   }
+  // }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.pageChanged.emit(this.currentPage);
     }
   }
 
-  get pageNumbers(): number[] {
-    return Array.from(
-      {
-        length: this.totalPages
-      },
-      (_, index) => index + 1
-    );
+  nextPage() {
+    if (this.currentPage < this.getTotalPages) {
+      this.currentPage++;
+      this.pageChanged.emit(this.currentPage);
+    }
   }
 
-  goToPage(event: Event): void {
-    const page = event.target as HTMLInputElement;
-    console.log("Test " + this.currentPage + " total " + this.totalPages);
-    const pageNumber = parseInt(page.value, 10);
-    if (pageNumber && pageNumber >= 0 && pageNumber <= this.totalPages && pageNumber !== this.currentPage) {
+  get getPageNumbers(): number[] {
+    // return Array.from(
+    //   {
+    //     length: this.totalPages
+    //   },
+    //   (_, index) => index + 1
+    // );
+    let pageNumbers = Array(this.getTotalPages).fill(0).map((x, i) => i + 1);
+    return pageNumbers;
+  }
+
+  goToPage(pageNumber: number): void {
+    // const pageNumber = parseInt(page, 10);
+    // if (pageNumber && pageNumber >= 1 && pageNumber <= this.getTotalPages && pageNumber !== this.currentPage) {
       this.currentPage = pageNumber;
-      this.pageChanged.emit(pageNumber);
-    }
+      this.pageChanged.emit(this.currentPage);
+    // }
   }
 }

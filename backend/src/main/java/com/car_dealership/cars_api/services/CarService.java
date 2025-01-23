@@ -114,15 +114,18 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
-    public List<CarResponseDTO> getFilteredCars(String manufacturer,
-                                                      String model,
-                                                      String motor,
-                                                      Integer release_year,
-                                                      Float min_price,
-                                                      Float max_price,
-                                                      String color,
-                                                      String car) {
-        List<Car> cars = carRepository.findFilteredCars(manufacturer, model, motor, release_year, min_price, max_price, color, car);
-        return cars.stream().map(this::createNewCarResponse).toList();
+    public List<CarResponseDTO> getFilteredCars(int page,
+                                                int size,
+                                                String manufacturer,
+                                                String model,
+                                                String motor,
+                                                Integer release_year,
+                                                Float min_price,
+                                                Float max_price,
+                                                String color,
+                                                String car) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Car> allCars = carRepository.findFilteredCars(pageable, manufacturer, model, motor, release_year, min_price, max_price, color, car);
+        return allCars.stream().map(this::createNewCarResponse).toList();
     }
 }

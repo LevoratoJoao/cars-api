@@ -17,9 +17,8 @@ export class CarService {
     return data ?? [];
   }
 
-  getFilteredCars(manu: string, color: string, model: string, minPrice: number, maxPrice: number, carName: string): Observable<Car[]> {
-
-    const data = this.http.get<Car[]>(this.API_URL + "/api/v1/cars/filter?manufacturer=" + manu + "&color=" + color + "&model=" + model + "&min_price=" + minPrice + "&max_price=" + maxPrice + "&car=" + carName);
+  getFilteredCars(page: number, size: number, manu: string, color: string, model: string, minPrice: number, maxPrice: number, carName: string): Observable<Car[]> {
+    const data = this.http.get<Car[]>(this.API_URL + "/api/v1/cars/filter?page=" + page + "&size=" + size + "&manufacturer=" + manu + "&color=" + color + "&model=" + model + "&min_price=" + minPrice + "&max_price=" + maxPrice + "&car=" + carName);
     return data;
   }
 }

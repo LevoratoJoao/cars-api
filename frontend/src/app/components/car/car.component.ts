@@ -30,7 +30,7 @@ export class CarComponent {
   carName: string = "";
 
   paginatedData: any[] = [];
-  currentPage: number = 0;
+  currentPage: number = 1;
   sizeOfPage: number = 2;
   totalItems: number = 0;
 
@@ -56,9 +56,9 @@ export class CarComponent {
   }
 
   fetchData(): void {
-    this.carService.getAllCars(this.currentPage, this.sizeOfPage).subscribe(
-      (carsList: Car[]) => {
-        this._carsList = carsList;
+    this.carService.getFilteredCars(this.currentPage, this.sizeOfPage, this.selectedManu, this.selectedColor, this.selectedModel, this.minPrice, this.maxPrice, this.carName).subscribe(
+      (filteredList: Car[]) => {
+        this.carsList = filteredList;
       }
     );
   }
@@ -66,7 +66,7 @@ export class CarComponent {
   applyFilter(): void {
     this.minPrice = this.minPrice === null ? 0 : this.minPrice;
     this.maxPrice = this.maxPrice === null ? 9999999 : this.maxPrice;
-    this.carService.getFilteredCars(this.selectedManu, this.selectedColor, this.selectedModel, this.minPrice, this.maxPrice, this.carName).subscribe(
+    this.carService.getFilteredCars(this.currentPage, this.sizeOfPage, this.selectedManu, this.selectedColor, this.selectedModel, this.minPrice, this.maxPrice, this.carName).subscribe(
       (filteredList: Car[]) => {
         this.carsList = filteredList;
       }
