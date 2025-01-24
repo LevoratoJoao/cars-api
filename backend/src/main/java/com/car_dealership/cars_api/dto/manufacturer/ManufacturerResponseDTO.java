@@ -1,4 +1,4 @@
-package com.car_dealership.cars_api.models.manufacturer;
+package com.car_dealership.cars_api.dto.manufacturer;
 
 public record ManufacturerResponseDTO(Integer man_id, String man_name, String man_country) {
 }

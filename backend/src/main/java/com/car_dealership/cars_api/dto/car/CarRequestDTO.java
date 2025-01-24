@@ -1,6 +1,6 @@
-package com.car_dealership.cars_api.models.car;
+package com.car_dealership.cars_api.dto.car;
 
-import com.car_dealership.cars_api.models.manufacturer.ManufacturerRequestDTO;
+import com.car_dealership.cars_api.dto.manufacturer.ManufacturerRequestDTO;
 
 import java.util.Set;
 

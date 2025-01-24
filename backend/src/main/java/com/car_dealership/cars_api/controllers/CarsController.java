@@ -1,11 +1,10 @@
 package com.car_dealership.cars_api.controllers;
 
 import com.car_dealership.cars_api.models.car.Car;
-import com.car_dealership.cars_api.models.car.CarRequestDTO;
-import com.car_dealership.cars_api.models.car.CarResponseDTO;
+import com.car_dealership.cars_api.dto.car.CarRequestDTO;
+import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.services.CarService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +28,7 @@ public class CarsController {
     }
 
     @PostMapping
-    public ResponseEntity<Car> post(@RequestBody CarRequestDTO carRequest) {
+    public ResponseEntity<CarResponseDTO> post(@RequestBody CarRequestDTO carRequest) {
         return ResponseEntity.ok().body(carService.saveCar(carRequest));
     }
 

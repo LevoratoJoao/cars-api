@@ -1,12 +1,13 @@
 package com.car_dealership.cars_api.services;
 
+import com.car_dealership.cars_api.dto.color.ColorResponseDTO;
 import com.car_dealership.cars_api.models.car.Car;
 import com.car_dealership.cars_api.models.color.Color;
-import com.car_dealership.cars_api.models.car.CarRequestDTO;
-import com.car_dealership.cars_api.models.car.CarResponseDTO;
-import com.car_dealership.cars_api.models.color.ColorRequestDTO;
+import com.car_dealership.cars_api.dto.car.CarRequestDTO;
+import com.car_dealership.cars_api.dto.car.CarResponseDTO;
+import com.car_dealership.cars_api.dto.color.ColorRequestDTO;
 import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
-import com.car_dealership.cars_api.models.manufacturer.ManufacturerRequestDTO;
+import com.car_dealership.cars_api.dto.manufacturer.ManufacturerRequestDTO;
 import com.car_dealership.cars_api.repositories.CarRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -76,14 +77,14 @@ public class CarService {
                 });
     }
 
-    public Car saveCar(CarRequestDTO carRequest) {
+    public CarResponseDTO saveCar(CarRequestDTO carRequest) {
         Set<Color> colors = carRequest.colors().stream().map(color -> colorService
             .getColorRepository()
             .findByColorName(color)
             .orElseGet(() -> {
-                Color newColor = colorService.saveColor(new ColorRequestDTO(color));
-                System.out.println("New color was added: " + newColor.getColor_name());
-                return newColor;
+                ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
+                System.out.println("New color was added: " + newColor.name());
+                return new Color(newColor.name());
             })).collect(Collectors.toSet());
         Optional<Car> carExists = carRepository.findByCarName(carRequest.car_name());
         if (carExists.isEmpty()) {
@@ -98,11 +99,42 @@ public class CarService {
                     colors
             );
             carRepository.save(newCar);
-            return newCar;
+            return new CarResponseDTO(newCar.getCar_id(),
+                                        newCar.getCar_name(),
+                                        newCar.getModel(),
+                                        newCar.getRelease_year(),
+                                        newCar.getMotor(),
+                                        newCar.getKilometers(),
+                                        newCar.getPrice(),
+                                        new ManufacturerRequestDTO(
+                                            newCar.getManufacturer().getManufacturer_name(),
+                                            newCar.getManufacturer().getCountry()
+                                        ),
+                                        newCar.getColors()
+                                            .stream()
+                                            .map(Color::getColor_name)
+                                            .collect(Collectors.toSet())
+            );
         }
         carExists.get().setColors(colors);
         carRepository.save(carExists.get());
-        return carExists.get();
+        return new CarResponseDTO(carExists.get().getCar_id(),
+                                    carExists.get().getCar_name(),
+                                    carExists.get().getModel(),
+                                    carExists.get().getRelease_year(),
+                                    carExists.get().getMotor(),
+                                    carExists.get().getKilometers(),
+                                    carExists.get().getPrice(),
+                                    new ManufacturerRequestDTO(
+                                            carExists.get().getManufacturer().getManufacturer_name(),
+                                            carExists.get().getManufacturer().getCountry()
+                                    ),
+                                    carExists.get()
+                                            .getColors()
+                                            .stream()
+                                            .map(Color::getColor_name)
+                                            .collect(Collectors.toSet())
+        );
     }
 
     public Car updateCar(Car car) {

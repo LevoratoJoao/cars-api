@@ -1,8 +1,8 @@
 package com.car_dealership.cars_api.controllers;
 
 import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
-import com.car_dealership.cars_api.models.manufacturer.ManufacturerRequestDTO;
-import com.car_dealership.cars_api.models.manufacturer.ManufacturerResponseDTO;
+import com.car_dealership.cars_api.dto.manufacturer.ManufacturerRequestDTO;
+import com.car_dealership.cars_api.dto.manufacturer.ManufacturerResponseDTO;
 import com.car_dealership.cars_api.services.ManufacturerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class ManufacturerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ManufacturerResponseDTO> get(@PathVariable Integer id) {
+    public ResponseEntity<ManufacturerResponseDTO> getById(@PathVariable Integer id) {
         return ResponseEntity.ok().body(manufacturerService.getManufacturerById(id));
     }
 

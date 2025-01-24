@@ -20,6 +20,7 @@ public class Color {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer color_id;
 
+    @Column(unique = true, nullable = false)
     private String color_name;
 
     public Color(String color_name) {
