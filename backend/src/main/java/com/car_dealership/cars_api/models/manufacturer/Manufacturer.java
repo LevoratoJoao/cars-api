@@ -1,6 +1,7 @@
 package com.car_dealership.cars_api.models.manufacturer;
 
 import com.car_dealership.cars_api.models.car.Car;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Manufacturer {
     private String country;
 
     @OneToMany(mappedBy = "manufacturer")
+    @JsonIgnore
     private List<Car> cars;
 
     public Manufacturer(String man_name, String country) {
