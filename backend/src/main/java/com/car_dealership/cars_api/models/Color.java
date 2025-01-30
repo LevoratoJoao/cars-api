@@ -1,6 +1,5 @@
-package com.car_dealership.cars_api.models.color;
+package com.car_dealership.cars_api.models;
 
-import com.car_dealership.cars_api.models.car.Car;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;

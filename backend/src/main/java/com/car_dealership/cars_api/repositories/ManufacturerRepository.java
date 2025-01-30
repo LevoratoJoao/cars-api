@@ -1,6 +1,6 @@
 package com.car_dealership.cars_api.repositories;
 
-import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
+import com.car_dealership.cars_api.models.Manufacturer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

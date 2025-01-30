@@ -1,6 +1,6 @@
 package com.car_dealership.cars_api.repositories;
 
-import com.car_dealership.cars_api.models.color.Color;
+import com.car_dealership.cars_api.models.Color;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

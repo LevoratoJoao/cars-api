@@ -1,8 +1,5 @@
-package com.car_dealership.cars_api.models.sales;
+package com.car_dealership.cars_api.models;
 
-import com.car_dealership.cars_api.models.car.Car;
-import com.car_dealership.cars_api.models.customer.Customer;
-import com.car_dealership.cars_api.models.employee.Employee;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,11 +1,8 @@
 package com.car_dealership.cars_api.dto.sales;
 
-import com.car_dealership.cars_api.dto.car.CarResponseDTO;
-import com.car_dealership.cars_api.dto.customer.CustomerResponseDTO;
-import com.car_dealership.cars_api.dto.employee.EmployeeResponseDTO;
-import com.car_dealership.cars_api.models.car.Car;
-import com.car_dealership.cars_api.models.customer.Customer;
-import com.car_dealership.cars_api.models.employee.Employee;
+import com.car_dealership.cars_api.models.Car;
+import com.car_dealership.cars_api.models.Customer;
+import com.car_dealership.cars_api.models.Employee;
 
 import java.time.LocalDate;
 

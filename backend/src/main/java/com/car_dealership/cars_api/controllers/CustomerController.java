@@ -27,7 +27,22 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDTO> post(@RequestBody CustomerRequestDTO customerRequest) {
+    public ResponseEntity<CustomerResponseDTO> postEmployee(@RequestBody CustomerRequestDTO customerRequest) {
         return ResponseEntity.ok().body(customerService.saveCustomer(customerRequest));
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<List<CustomerResponseDTO>> postListEmployees(@RequestBody List<CustomerRequestDTO> customersRequest) {
+        return ResponseEntity.ok().body(customerService.saveCustomers(customersRequest));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<CustomerResponseDTO>> getCustomersByFilter(@RequestParam(defaultValue = "1") int page,
+                                                                          @RequestParam(defaultValue = "10") int size,
+                                                                          @RequestParam(defaultValue = "") String first_name,
+                                                                          @RequestParam(defaultValue = "") String last_name,
+                                                                          @RequestParam(defaultValue = "") String email,
+                                                                          @RequestParam(defaultValue = "") String phone_number) {
+        return ResponseEntity.ok().body(customerService.getFilteredCustomers(page - 1, size, first_name, last_name, email, phone_number));
     }
 }

@@ -1,12 +1,11 @@
 package com.car_dealership.cars_api.services;
 
-import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.dto.sales.SalesRequestDTO;
 import com.car_dealership.cars_api.dto.sales.SalesResponseDTO;
-import com.car_dealership.cars_api.models.car.Car;
-import com.car_dealership.cars_api.models.customer.Customer;
-import com.car_dealership.cars_api.models.employee.Employee;
-import com.car_dealership.cars_api.models.sales.Sales;
+import com.car_dealership.cars_api.models.Car;
+import com.car_dealership.cars_api.models.Customer;
+import com.car_dealership.cars_api.models.Employee;
+import com.car_dealership.cars_api.models.Sales;
 import com.car_dealership.cars_api.repositories.CarRepository;
 import com.car_dealership.cars_api.repositories.CustomerRepository;
 import com.car_dealership.cars_api.repositories.EmployeeRepository;

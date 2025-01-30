@@ -1,4 +1,4 @@
-package com.car_dealership.cars_api.models.employee;
+package com.car_dealership.cars_api.models;
 
 import jakarta.persistence.*;
 import lombok.*;

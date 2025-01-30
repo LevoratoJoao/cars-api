@@ -1,6 +1,5 @@
 package com.car_dealership.cars_api.controllers;
 
-import com.car_dealership.cars_api.models.color.Color;
 import com.car_dealership.cars_api.dto.color.ColorRequestDTO;
 import com.car_dealership.cars_api.dto.color.ColorResponseDTO;
 import com.car_dealership.cars_api.services.ColorService;

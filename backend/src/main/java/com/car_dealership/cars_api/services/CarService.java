@@ -1,12 +1,12 @@
 package com.car_dealership.cars_api.services;
 
 import com.car_dealership.cars_api.dto.color.ColorResponseDTO;
-import com.car_dealership.cars_api.models.car.Car;
-import com.car_dealership.cars_api.models.color.Color;
+import com.car_dealership.cars_api.models.Car;
+import com.car_dealership.cars_api.models.Color;
 import com.car_dealership.cars_api.dto.car.CarRequestDTO;
 import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.dto.color.ColorRequestDTO;
-import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
+import com.car_dealership.cars_api.models.Manufacturer;
 import com.car_dealership.cars_api.dto.manufacturer.ManufacturerRequestDTO;
 import com.car_dealership.cars_api.repositories.CarRepository;
 import lombok.NonNull;
@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -79,13 +80,13 @@ public class CarService {
 
     public CarResponseDTO saveCar(CarRequestDTO carRequest) {
         Set<Color> colors = carRequest.colors().stream().map(color -> colorService
-            .getColorRepository()
-            .findByColorName(color)
-            .orElseGet(() -> {
-                ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
-                System.out.println("New color was added: " + newColor.name());
-                return new Color(newColor.name());
-            })).collect(Collectors.toSet());
+                .getColorRepository()
+                .findByColorName(color)
+                .orElseGet(() -> {
+                    ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
+                    System.out.println("New color was added: " + newColor.name());
+                    return new Color(newColor.name());
+                })).collect(Collectors.toSet());
         Optional<Car> carExists = carRepository.findByCarName(carRequest.car_name());
         if (carExists.isEmpty()) {
             Car newCar = new Car(
@@ -104,6 +105,14 @@ public class CarService {
         carExists.get().setColors(colors);
         carRepository.save(carExists.get());
         return createNewCarResponse(carExists.get());
+    }
+
+    public List<CarResponseDTO> saveCars(List<CarRequestDTO> carRequest) {
+        List<CarResponseDTO> response = new ArrayList<>();
+        for (CarRequestDTO car : carRequest) {
+            response.add(saveCar(car));
+        }
+        return response;
     }
 
     public Car updateCar(Car car) {

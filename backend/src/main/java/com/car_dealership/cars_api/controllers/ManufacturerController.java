@@ -1,6 +1,6 @@
 package com.car_dealership.cars_api.controllers;
 
-import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
+import com.car_dealership.cars_api.models.Manufacturer;
 import com.car_dealership.cars_api.dto.manufacturer.ManufacturerRequestDTO;
 import com.car_dealership.cars_api.dto.manufacturer.ManufacturerResponseDTO;
 import com.car_dealership.cars_api.services.ManufacturerService;

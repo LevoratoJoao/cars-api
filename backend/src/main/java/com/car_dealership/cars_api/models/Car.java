@@ -1,7 +1,5 @@
-package com.car_dealership.cars_api.models.car;
+package com.car_dealership.cars_api.models;
 
-import com.car_dealership.cars_api.models.color.Color;
-import com.car_dealership.cars_api.models.manufacturer.Manufacturer;
 import jakarta.persistence.*;
 import lombok.*;
 

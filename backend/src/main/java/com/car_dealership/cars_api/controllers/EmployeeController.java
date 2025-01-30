@@ -4,9 +4,11 @@ import com.car_dealership.cars_api.dto.employee.EmployeeRequestDTO;
 import com.car_dealership.cars_api.dto.employee.EmployeeResponseDTO;
 import com.car_dealership.cars_api.services.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -28,6 +30,26 @@ public class EmployeeController {
     @PostMapping
     public ResponseEntity<EmployeeResponseDTO> post(@RequestBody EmployeeRequestDTO employeeRequest) {
         return ResponseEntity.ok().body(employeeService.saveEmployee(employeeRequest));
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<List<EmployeeResponseDTO>> postListEmployees(@RequestBody List<EmployeeRequestDTO> employeesRequest) {
+        return ResponseEntity.ok().body(employeeService.saveEmployees(employeesRequest));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<EmployeeResponseDTO>> getEmployeeByFilter(@RequestParam(defaultValue = "1") int page,
+                                                                          @RequestParam(defaultValue = "10") int size,
+                                                                          @RequestParam(defaultValue = "") String first_name,
+                                                                          @RequestParam(defaultValue = "") String last_name,
+                                                                          @RequestParam(defaultValue = "") String position,
+                                                                          @RequestParam(defaultValue = "") String email,
+                                                                          @RequestParam(defaultValue = "0") Float min_salary,
+                                                                          @RequestParam(defaultValue = "10000000") Float max_salary,
+                                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                                             LocalDate hire_date,
+                                                                          @RequestParam(defaultValue = "") String phone_number) {
+    return ResponseEntity.ok().body(employeeService.getFilteredEmployees(page - 1, size, first_name, last_name, position, email, min_salary, max_salary, hire_date, phone_number));
     }
 
 }

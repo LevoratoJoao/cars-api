@@ -1,6 +1,6 @@
 package com.car_dealership.cars_api.controllers;
 
-import com.car_dealership.cars_api.models.car.Car;
+import com.car_dealership.cars_api.models.Car;
 import com.car_dealership.cars_api.dto.car.CarRequestDTO;
 import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.services.CarService;
@@ -23,13 +23,18 @@ public class CarsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CarResponseDTO> get(@PathVariable Integer id) {
+    public ResponseEntity<CarResponseDTO> getCarById(@PathVariable Integer id) {
         return ResponseEntity.ok().body(carService.getCarById(id));
     }
 
     @PostMapping
-    public ResponseEntity<CarResponseDTO> post(@RequestBody CarRequestDTO carRequest) {
+    public ResponseEntity<CarResponseDTO> postNewCar(@RequestBody CarRequestDTO carRequest) {
         return ResponseEntity.ok().body(carService.saveCar(carRequest));
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<List<CarResponseDTO>> postListCars(@RequestBody List<CarRequestDTO> carRequest) {
+        return ResponseEntity.ok().body(carService.saveCars(carRequest));
     }
 
     @PutMapping
