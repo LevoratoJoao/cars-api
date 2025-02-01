@@ -71,8 +71,8 @@ public class CustomerService {
         return customersResponse;
     }
 
-    public List<CustomerResponseDTO> getFilteredCustomers(int page,
-                                                          int size,
+    public List<CustomerResponseDTO> getFilteredCustomers(Integer page,
+                                                          Integer size,
                                                           String first_name,
                                                           String last_name,
                                                           String email,

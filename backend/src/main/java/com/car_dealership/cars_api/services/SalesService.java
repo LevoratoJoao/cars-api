@@ -14,8 +14,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,6 +88,24 @@ public class SalesService {
         Sales newSale = new Sales(sale.date(), sale.sale_price(), customer.get(), car.get(), employee.get());
         salesRepository.save(newSale);
         return new SalesResponseDTO(newSale.getSales_id(), newSale.getSale_date(), newSale.getSale_price(), newSale.getCar(), newSale.getCustomer(), newSale.getEmployee());
+    }
+
+    public List<SalesResponseDTO> getFilteredSales(Integer page, Integer size, LocalDate date, Float min_price, Float max_price, String car_name, String customer_name, String employee_name) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        //Pageable pageable = PageRequest.of(page, size);
+
+        Page<Sales> filteredSales = salesRepository.findFilteredSales(pageable, date, min_price, max_price, car_name, customer_name, employee_name);
+
+        return filteredSales.stream()
+                .map(sale -> new SalesResponseDTO(
+                    sale.getSales_id(),
+                    sale.getSale_date(),
+                    sale.getSale_price(),
+                    sale.getCar(),
+                    sale.getCustomer(),
+                    sale.getEmployee()
+                )
+        ).toList();
     }
 
 }

@@ -54,7 +54,6 @@ public class EmployeeService {
 
     public List<EmployeeResponseDTO> getFilteredEmployees(Integer page, Integer size, String first_name, String last_name, String position, String email, Float min_salary, Float max_salary, LocalDate hire_date, String phone_number) {
         Pageable pageable = PageRequest.of(page, size);
-        System.out.println("HIRE DATE: " + hire_date + "");
         Page<Employee> filteredEmployees = employeeRepository.findFilteredEmployees(pageable, first_name, last_name, position, email, min_salary, max_salary, hire_date, phone_number);
         return filteredEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList();
     }

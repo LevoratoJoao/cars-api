@@ -40,5 +40,11 @@ public class Sales {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    public Sales(LocalDate sale_date, Float sale_price, Customer customer, Car car, Employee employee) {}
+    public Sales(LocalDate sale_date, Float sale_price, Customer customer, Car car, Employee employee) {
+        this.sale_date = sale_date;
+        this.sale_price = sale_price;
+        this.customer = customer;
+        this.car = car;
+        this.employee = employee;
+    }
 }

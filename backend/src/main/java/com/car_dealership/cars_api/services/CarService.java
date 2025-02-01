@@ -124,8 +124,8 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
-    public List<CarResponseDTO> getFilteredCars(int page,
-                                                int size,
+    public List<CarResponseDTO> getFilteredCars(Integer page,
+                                                Integer size,
                                                 String manufacturer,
                                                 String model,
                                                 String motor,
