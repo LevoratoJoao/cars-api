@@ -31,7 +31,7 @@ export class CarComponent {
 
   paginatedData: any[] = [];
   currentPage: number = 1;
-  sizeOfPage: number = 5;
+  sizeOfPage: number = 3;
   totalItems: number = 0;
 
   constructor(private carService: CarService, private manuService: ManufacturerService, private colorService: ColorService) { }
@@ -40,7 +40,6 @@ export class CarComponent {
     this.carService.getAllCars(this.currentPage, this.sizeOfPage).subscribe(
       (carsList: Car[]) => {
         this._carsList = carsList;
-        this.totalItems = carsList.length;
       }
     );
     this.manuService.getAllManufacturers().subscribe(
@@ -53,6 +52,11 @@ export class CarComponent {
         this.colorList = colorList;
       }
     );
+    this.carService.getLength().subscribe(
+      (length: number) => {
+        this.totalItems = length;
+      }
+    );
   }
 
   fetchData(): void {
@@ -61,16 +65,13 @@ export class CarComponent {
         this.carsList = filteredList;
       }
     );
+    console.log(this.carsList);
   }
 
   applyFilter(): void {
     this.minPrice = this.minPrice === null ? 0 : this.minPrice;
     this.maxPrice = this.maxPrice === null ? 9999999 : this.maxPrice;
-    this.carService.getFilteredCars(this.currentPage, this.sizeOfPage, this.selectedManu, this.selectedColor, this.selectedModel, this.minPrice, this.maxPrice, this.carName).subscribe(
-      (filteredList: Car[]) => {
-        this.carsList = filteredList;
-      }
-    );
+    this.fetchData();
     console.log(this._carsList);
   }
 

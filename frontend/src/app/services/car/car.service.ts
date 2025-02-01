@@ -21,4 +21,9 @@ export class CarService {
     const data = this.http.get<Car[]>(this.API_URL + "/api/v1/cars/filter?page=" + page + "&size=" + size + "&manufacturer=" + manu + "&color=" + color + "&model=" + model + "&min_price=" + minPrice + "&max_price=" + maxPrice + "&car=" + carName);
     return data;
   }
+
+  getLength(): Observable<number> {
+    const data = this.http.get<number>(this.API_URL + "/api/v1/cars/length");
+    return data;
+  }
 }

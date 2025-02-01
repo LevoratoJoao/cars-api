@@ -21,8 +21,7 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
             "c.motor, " +
             "c.kilometers, " +
             "c.price, " +
-            "c.manufacturer, " +
-            "cl.color_name " +
+            "c.manufacturer " +
             "from car c " +
                    "join manufacturer m on c.manufacturer = m.manufacturer_id " +
                    "join car_colors cc on cc.car_id = c.car_id " +

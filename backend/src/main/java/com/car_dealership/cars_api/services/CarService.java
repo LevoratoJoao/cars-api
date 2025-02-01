@@ -138,4 +138,8 @@ public class CarService {
         Page<Car> allCars = carRepository.findFilteredCars(pageable, manufacturer, model, motor, release_year, min_price, max_price, color, car);
         return allCars.stream().map(this::createNewCarResponse).toList();
     }
+
+    public Integer getLength() {
+        return (int) carRepository.count();
+    }
 }

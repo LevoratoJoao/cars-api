@@ -1,0 +1,70 @@
+<div id="filter" class="h4 pb-2 mb-4 text-danger border-bottom border-danger"> <!-- class="border border-secondary rounded" -->
+    <div class="container-fluid text-center">
+        <div class="row justify-content-start">
+            <div class="col">
+                Filter by
+            </div>
+            <div class="col">
+                <p>First Name:</p>
+                <input [(ngModel)]="firstName" type="text" id="first-name" class="form-control" placeholder="First Name">
+            </div>
+            <div class="col">
+                <p>Last Name:</p>
+                <input [(ngModel)]="lastName" type="text" id="last-name" class="form-control" placeholder="Last Name">
+            </div>
+            <div class="col">
+                <p>Position:</p>
+                <input [(ngModel)]="position" type="text" id="position" class="form-control" placeholder="Position">
+            </div>
+            <div class="col">
+                <p>Email:</p>
+                <input [(ngModel)]="email" type="text" id="email" class="form-control" placeholder="@example.com">
+            </div>
+            <div class="col">
+                <p>Phone Number:</p>
+                <input [(ngModel)]="phoneNumber" type="text" id="phone-number" class="form-control" placeholder="(12) 3456-7890">
+            </div>
+
+            <div class="col">
+                <p>Min salary:</p>
+                <input [(ngModel)]="minSalary" type="number" id="min-salary" class="form-control" placeholder="0">
+            </div>
+
+            <div class="col">
+                <p>Max salary:</p>
+                <input [(ngModel)]="maxSalary" type="number" id="max-salary" class="form-control" placeholder="100000">
+            </div>
+
+            <div class="col">
+                <button type="button" id="apply-filter" class="btn btn-danger" (click)="applyFilter()">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section class="employee-list">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 id="main-tittle">Employees:</h1>
+                <div class="list-group">
+
+                    <u>
+                        <li *ngFor="let employee of employeeList">
+                            <p>{{ employee.first_name }} {{ employee.last_name }}</p>
+                        </li>
+                    </u>
+                </div>
+            </div>
+        </div>
+
+        <app-pagination
+            [currentPage]="currentPage"
+            [sizeOfPage]="sizeOfPage"
+            [totalItems]="totalItems"
+            (pageChanged)="onPageChange($event)"
+        >
+        </app-pagination>
+    </div>
+</section>

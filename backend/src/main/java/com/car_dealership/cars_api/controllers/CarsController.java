@@ -61,4 +61,9 @@ public class CarsController {
                                                                 @RequestParam(defaultValue = "") String car) {
         return ResponseEntity.ok().body(carService.getFilteredCars(page - 1, size, manufacturer, model, motor, release_year, min_price, max_price, color, car));
     }
+
+    @GetMapping("/length")
+    public ResponseEntity<Integer> getLength() {
+        return ResponseEntity.ok().body(carService.getLength());
+    }
 }

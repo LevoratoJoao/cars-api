@@ -55,6 +55,7 @@ export class PaginationComponent {
   goToPage(pageNumber: number): void {
     // const pageNumber = parseInt(page, 10);
     // if (pageNumber && pageNumber >= 1 && pageNumber <= this.getTotalPages && pageNumber !== this.currentPage) {
+
       this.currentPage = pageNumber;
       this.pageChanged.emit(this.currentPage);
     // }
