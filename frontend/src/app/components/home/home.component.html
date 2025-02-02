@@ -1,6 +1,6 @@
 <section class="home">
     <div class="container text-center">
-        <h1>Welcome to the car dealership</h1>
+        <h1 class="h4 pb-2 mb-4 text-danger border-bottom border-danger" id="home-title">Welcome to the car dealership</h1>
         <div id="home-options" class="row justify-content-md-center">
             <div class="col-sm-2">
                 <div class="card border-danger mb-3">
@@ -27,7 +27,7 @@
             <div class="col-sm-2">
                 <div class="card border-danger mb-3">
                     <div class="card-body text-danger">
-                        <a href="#" class="card-link"><h5 class="card-title">Sells</h5></a>
+                        <a [routerLink]="['/sales']"><h5 class="card-title">Sales</h5></a>
                     </div>
                 </div>
             </div>
