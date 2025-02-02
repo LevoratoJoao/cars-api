@@ -4,10 +4,11 @@ import { EmployeeService } from '../../services/employee/employee.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
 
 @Component({
   selector: 'app-employee',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, EmployeeDetailsComponent],
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.css'
 })

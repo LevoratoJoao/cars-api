@@ -49,12 +49,9 @@
             <div class="col">
                 <h1 id="main-tittle">Employees:</h1>
                 <div class="list-group">
-
-                    <u>
-                        <li *ngFor="let employee of employeeList">
-                            <p>{{ employee.first_name }} {{ employee.last_name }}</p>
-                        </li>
-                    </u>
+                    <app-employee-details *ngFor="let employee of employeeList"
+                        [employee]="employee">
+                    </app-employee-details>
                 </div>
             </div>
         </div>
