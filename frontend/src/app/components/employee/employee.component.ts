@@ -22,7 +22,6 @@ export class EmployeeComponent {
   phoneNumber: string = "";
   minSalary: number = 0;
   maxSalary: number = 99999999;
-  carName: string = "";
 
   paginatedData: any[] = [];
   currentPage: number = 1;
@@ -44,7 +43,7 @@ export class EmployeeComponent {
       (employeeList: Employee[]) => {
         this.employeeList = employeeList;
       }
-    )
+    );
   }
 
   applyFilter(): void {

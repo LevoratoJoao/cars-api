@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { min, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Car } from '../../interfaces/car';
 
 @Injectable({

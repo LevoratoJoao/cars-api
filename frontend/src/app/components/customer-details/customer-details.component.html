@@ -1,0 +1,28 @@
+<li class="list-group-item clearfix d-flex rounded-2 border border-danger" id="customer-details">
+    <p class="p-0 m-0 flex-grow-1">{{ customer.first_name }} {{ customer.last_name }}</p>
+    <button type="button" class="btn btn-danger" data-bs-toggle="collapse" attr.data-bs-target="#collapse{{customer.customer_id}}" aria-expanded="false" attr.aria-controls="collapse{{customer.customer_id}}">Details</button>
+</li>
+<div class="collapse" id="collapse{{customer.customer_id}}">
+    <div class="card card-body">
+        <div class="container">
+            <div class="row align-items-start">
+                <div class="col">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group list-group-item">
+                            Id: {{ customer.customer_id }}
+                        </li>
+                        <li class="list-group list-group-item">
+                            Full name: {{ customer.first_name }} {{ customer.last_name }}
+                        </li>
+                        <li class="list-group list-group-item">
+                            Email: {{ customer.email }}
+                        </li>
+                        <li class="list-group list-group-item">
+                            Phone number: {{ customer.phone_number }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

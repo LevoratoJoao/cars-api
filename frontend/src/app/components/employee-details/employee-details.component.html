@@ -1,5 +1,5 @@
 <li class="list-group-item clearfix d-flex rounded-2 border border-danger" id="employee-details">
-    <p class="p-0 m-0 flex-grow-1">{{ employee.first_name }} {{ employee.last_name }} {{ employee.position }} {{ employee.email }}</p>
+    <p class="p-0 m-0 flex-grow-1">{{ employee.first_name }} {{ employee.last_name }}</p>
     <button type="button" class="btn btn-danger" data-bs-toggle="collapse" attr.data-bs-target="#collapse{{employee.employee_id}}" aria-expanded="false" attr.aria-controls="collapse{{employee.employee_id}}">Details</button>
 </li>
 <div class="collapse" id="collapse{{employee.employee_id}}">
