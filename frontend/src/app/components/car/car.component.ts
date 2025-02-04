@@ -31,7 +31,7 @@ export class CarComponent {
 
   paginatedData: any[] = [];
   currentPage: number = 1;
-  sizeOfPage: number = 3;
+  sizeOfPage: number = 5;
   totalItems: number = 0;
 
   constructor(private carService: CarService, private manuService: ManufacturerService, private colorService: ColorService) { }

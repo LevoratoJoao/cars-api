@@ -22,7 +22,7 @@ export class CustomerComponent {
 
   paginatedData: any[] = [];
   currentPage: number = 1;
-  sizeOfPage: number = 3;
+  sizeOfPage: number = 5;
   totalItems: number = 0;
 
   constructor(private customerService: CustomerService) { }
