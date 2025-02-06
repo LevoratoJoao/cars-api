@@ -15,12 +15,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,19 +51,30 @@ public class CarService {
     }
 
     @Cacheable("cars")
-    public List<CarResponseDTO> getAllCars(int page, int size) {
+    @Async
+    public CompletableFuture<List<CarResponseDTO>> getAllCars(int page, int size) throws InterruptedException {
+
+        System.out.println("Executing getAllCars in thread: " + Thread.currentThread().getName());
         Pageable pageable = PageRequest.of(page, size);
         Page<Car> allCars = carRepository.findAll(pageable);
-        return allCars.stream().map(this::createNewCarResponse).toList();
+        Thread.sleep(2000);
+        System.out.println("All cars were found");
+        return CompletableFuture.completedFuture(allCars.stream().map(this::createNewCarResponse).toList());
     }
 
-    public CarResponseDTO getCarById(Integer id) {
+    @Async
+    public CompletableFuture<CarResponseDTO> getCarById(Integer id) throws InterruptedException {
+        System.out.println("Executing getCarById in thread: " + Thread.currentThread().getName());
+
         Optional<Car> carExists = carRepository.findById(id);
+        //Thread.sleep(1000);
         if (carExists.isPresent()) {
-            return createNewCarResponse(carExists.get());
+            System.out.println("Car with id { " + id + " } was found");
+            return CompletableFuture.completedFuture(createNewCarResponse(carExists.get()));
         }
         System.out.println("Car with id { " + id + " } was not found");
-        return null;
+
+        return CompletableFuture.completedFuture(null);
     }
 
     public Manufacturer getManufacturerOrCreate(CarRequestDTO carRequest) {
@@ -115,9 +128,10 @@ public class CarService {
         return response;
     }
 
-    public Car updateCar(Car car) {
+    @Async
+    public CompletableFuture<Car> updateCar(Car car) {
         System.out.println(car.toString());
-        return carRepository.save(car);
+        return CompletableFuture.completedFuture(carRepository.save(car));
     }
 
     public void deleteCar(Integer id) {

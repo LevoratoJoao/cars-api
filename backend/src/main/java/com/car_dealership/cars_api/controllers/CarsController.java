@@ -5,10 +5,12 @@ import com.car_dealership.cars_api.dto.car.CarRequestDTO;
 import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.services.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,14 +19,14 @@ public class CarsController {
     private final CarService carService;
 
     @GetMapping
-    public ResponseEntity<List<CarResponseDTO>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
-        List<CarResponseDTO> allCars = carService.getAllCars(page - 1, size);
-        return ResponseEntity.ok().body(allCars);
+    public CompletableFuture<ResponseEntity<List<CarResponseDTO>>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) throws InterruptedException {
+        CompletableFuture<List<CarResponseDTO>> allCars = carService.getAllCars(page - 1, size);
+        return allCars.thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CarResponseDTO> getCarById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(carService.getCarById(id));
+    public CompletableFuture<ResponseEntity<CarResponseDTO>> getCarById(@PathVariable Integer id) throws InterruptedException {
+        return carService.getCarById(id).thenApply(ResponseEntity::ok);
     }
 
     @PostMapping
@@ -38,8 +40,8 @@ public class CarsController {
     }
 
     @PutMapping
-    public ResponseEntity<Car> put(@RequestBody Car carRequest) {
-        return ResponseEntity.ok().body(carService.updateCar(carRequest));
+    public CompletableFuture<ResponseEntity<Car>> put(@RequestBody Car carRequest) {
+        return carService.updateCar(carRequest).thenApply(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{id}")
