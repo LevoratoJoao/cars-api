@@ -9,6 +9,7 @@ import com.car_dealership.cars_api.dto.color.ColorRequestDTO;
 import com.car_dealership.cars_api.models.Manufacturer;
 import com.car_dealership.cars_api.dto.manufacturer.ManufacturerRequestDTO;
 import com.car_dealership.cars_api.repositories.CarRepository;
+import jakarta.persistence.OptimisticLockException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,11 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -116,9 +115,10 @@ public class CarService {
             return createNewCarResponse(newCar);
         }
         carExists.get().setColors(colors);
-        carRepository.save(carExists.get());
+        Car car = carRepository.save(carExists.get());
         return createNewCarResponse(carExists.get());
     }
+
 
     public List<CarResponseDTO> saveCars(List<CarRequestDTO> carRequest) {
         List<CarResponseDTO> response = new ArrayList<>();
@@ -128,10 +128,36 @@ public class CarService {
         return response;
     }
 
-    @Async
-    public CompletableFuture<Car> updateCar(Car car) {
-        System.out.println(car.toString());
-        return CompletableFuture.completedFuture(carRepository.save(car));
+    @Transactional
+    public CompletableFuture<Car> updateCar(Integer carId, CarRequestDTO updateCar) throws Exception {
+        try {
+            Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found"));
+
+            car.setCar_name(updateCar.car_name());
+            car.setModel(updateCar.model());
+            car.setRelease_year(updateCar.release_year());
+            car.setMotor(updateCar.motor());
+            car.setKilometers(updateCar.kilometers());
+            car.setPrice(updateCar.price());
+
+            Set<Color> colors = updateCar.colors().stream().map(color -> colorService
+                    .getColorRepository()
+                    .findByColorName(color)
+                    .orElseGet(() -> {
+                        ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
+                        System.out.println("New color was added: " + newColor.name());
+                        return new Color(newColor.name());
+                    })).collect(Collectors.toSet());
+            car.setColors(colors);
+
+            Car savedCar = carRepository.save(car);
+
+            return CompletableFuture.completedFuture(savedCar);
+
+        } catch (OptimisticLockException e) {
+            throw new Exception("The car was updated by another user. Please reload and try again.");
+        }
+
     }
 
     public void deleteCar(Integer id) {

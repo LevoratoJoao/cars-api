@@ -39,9 +39,9 @@ public class CarsController {
         return ResponseEntity.ok().body(carService.saveCars(carRequest));
     }
 
-    @PutMapping
-    public CompletableFuture<ResponseEntity<Car>> put(@RequestBody Car carRequest) {
-        return carService.updateCar(carRequest).thenApply(ResponseEntity::ok);
+    @PutMapping("/{id}")
+    public CompletableFuture<ResponseEntity<Car>> put(@PathVariable Integer id, @RequestBody CarRequestDTO carRequest) throws Exception {
+        return carService.updateCar(id, carRequest).thenApply(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{id}")

@@ -45,19 +45,5 @@ public class CarServiceIntegrationTest {
         assertNotNull(carById);
         assertEquals("Toyota Corolla", carById.car_name());
     }
-
-    @Test
-    public void testFindCarByIdAsync() throws Exception {
-        CompletableFuture<CarResponseDTO> future = carService.getCarById(2);
-
-        // Allow some time for async task to complete
-        while (!future.isDone()) {
-            Thread.sleep(100);
-        }
-
-        CarResponseDTO car = future.get();
-        assertNotNull(car);
-        assertEquals("Toyota Corolla", car.car_name());
-    }
 }
 
