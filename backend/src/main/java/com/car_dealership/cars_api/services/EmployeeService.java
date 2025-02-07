@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -62,4 +63,26 @@ public class EmployeeService {
         return CompletableFuture.completedFuture(filteredEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList());
     }
 
+
+    @Transactional
+    @Async
+    public CompletableFuture<EmployeeResponseDTO> updateEmployee(Integer employeeId, EmployeeRequestDTO updateEmployee) {
+        try {
+            Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new NoSuchElementException("Employee not found"));
+
+            employee.setFirst_name(updateEmployee.first_name());
+            employee.setLast_name(updateEmployee.last_name());
+            employee.setPosition(updateEmployee.position());
+            employee.setSalary(updateEmployee.salary());
+            employee.setHire_date(updateEmployee.hire_date());
+            employee.setPhone_number(updateEmployee.phone_number());
+            employee.setEmail(updateEmployee.email());
+
+            employeeRepository.save(employee);
+
+            return CompletableFuture.completedFuture(new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail()));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("The employee was updated by another user. Please reload and try again.");
+        }
+    }
 }

@@ -52,4 +52,9 @@ public class EmployeeController {
     return employeeService.getFilteredEmployees(page - 1, size, first_name, last_name, position, email, min_salary, max_salary, hire_date, phone_number).thenApply(ResponseEntity::ok).join();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeResponseDTO> putEmployee(@PathVariable Integer id, @RequestBody EmployeeRequestDTO employeeRequest) {
+        return employeeService.updateEmployee(id, employeeRequest).thenApply(ResponseEntity::ok).join();
+    }
+
 }
