@@ -29,8 +29,6 @@ public class CarServiceConcurrencyTest {
     @Test
     @Transactional
     public void testConcurrentCarUpdates() throws InterruptedException {
-        // Initialize car and save to the database
-
 
         // Create two threads simulating two customers updating the same car
         Thread customer1 = new Thread(() -> {

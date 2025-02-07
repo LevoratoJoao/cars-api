@@ -40,7 +40,7 @@ public class CarsController {
     }
 
     @PutMapping("/{id}")
-    public CompletableFuture<ResponseEntity<Car>> put(@PathVariable Integer id, @RequestBody CarRequestDTO carRequest) throws Exception {
+    public CompletableFuture<ResponseEntity<CarResponseDTO>> put(@PathVariable Integer id, @RequestBody CarRequestDTO carRequest) throws Exception {
         return carService.updateCar(id, carRequest).thenApply(ResponseEntity::ok);
     }
 
@@ -51,7 +51,7 @@ public class CarsController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<CarResponseDTO>> getCarsByFilter(@RequestParam(defaultValue = "1") int page,
+    public CompletableFuture<ResponseEntity<List<CarResponseDTO>>> getCarsByFilter(@RequestParam(defaultValue = "1") int page,
                                                                 @RequestParam(defaultValue = "10") int size,
                                                                 @RequestParam(defaultValue = "") String manufacturer,
                                                                 @RequestParam(defaultValue = "") String model,
@@ -61,7 +61,7 @@ public class CarsController {
                                                                 @RequestParam(defaultValue = "10000000") Float max_price,
                                                                 @RequestParam(defaultValue = "") String color,
                                                                 @RequestParam(defaultValue = "") String car) {
-        return ResponseEntity.ok().body(carService.getFilteredCars(page - 1, size, manufacturer, model, motor, release_year, min_price, max_price, color, car));
+        return carService.getFilteredCars(page - 1, size, manufacturer, model, motor, release_year, min_price, max_price, color, car).thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/length")

@@ -22,6 +22,9 @@ public class Customer {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Version
+    private Integer version;
+
     public Customer(String first_name, String last_name, String phone_number, String email) {
         this.first_name = first_name;
         this.last_name = last_name;

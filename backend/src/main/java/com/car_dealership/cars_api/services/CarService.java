@@ -9,7 +9,6 @@ import com.car_dealership.cars_api.dto.color.ColorRequestDTO;
 import com.car_dealership.cars_api.models.Manufacturer;
 import com.car_dealership.cars_api.dto.manufacturer.ManufacturerRequestDTO;
 import com.car_dealership.cars_api.repositories.CarRepository;
-import jakarta.persistence.OptimisticLockException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -90,8 +89,8 @@ public class CarService {
                 });
     }
 
-    public CarResponseDTO saveCar(CarRequestDTO carRequest) {
-        Set<Color> colors = carRequest.colors().stream().map(color -> colorService
+    public Set<Color> getColorsOrCreate(CarRequestDTO carRequest) {
+        return carRequest.colors().stream().map(color -> colorService
                 .getColorRepository()
                 .findByColorName(color)
                 .orElseGet(() -> {
@@ -99,6 +98,10 @@ public class CarService {
                     System.out.println("New color was added: " + newColor.name());
                     return new Color(newColor.name());
                 })).collect(Collectors.toSet());
+    }
+
+    public CarResponseDTO saveCar(CarRequestDTO carRequest) {
+        Set<Color> colors = getColorsOrCreate(carRequest);
         Optional<Car> carExists = carRepository.findByCarName(carRequest.car_name());
         if (carExists.isEmpty()) {
             Car newCar = new Car(
@@ -129,7 +132,8 @@ public class CarService {
     }
 
     @Transactional
-    public CompletableFuture<Car> updateCar(Integer carId, CarRequestDTO updateCar) throws Exception {
+    @Async
+    public CompletableFuture<CarResponseDTO> updateCar(Integer carId, CarRequestDTO updateCar) throws Exception {
         try {
             Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found"));
 
@@ -140,21 +144,14 @@ public class CarService {
             car.setKilometers(updateCar.kilometers());
             car.setPrice(updateCar.price());
 
-            Set<Color> colors = updateCar.colors().stream().map(color -> colorService
-                    .getColorRepository()
-                    .findByColorName(color)
-                    .orElseGet(() -> {
-                        ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
-                        System.out.println("New color was added: " + newColor.name());
-                        return new Color(newColor.name());
-                    })).collect(Collectors.toSet());
+            Set<Color> colors = getColorsOrCreate(updateCar);
             car.setColors(colors);
 
-            Car savedCar = carRepository.save(car);
+            carRepository.save(car);
 
-            return CompletableFuture.completedFuture(savedCar);
+            return CompletableFuture.completedFuture(new CarResponseDTO(car.getCar_id(), car.getCar_name(), car.getModel(), car.getRelease_year(), car.getMotor(), car.getKilometers(), car.getPrice(), new ManufacturerRequestDTO(car.getManufacturer().getManufacturer_name(), car.getManufacturer().getCountry()), car.getColors().stream().map(Color::getColor_name).collect(Collectors.toSet())));
 
-        } catch (OptimisticLockException e) {
+        } catch (Exception e) {
             throw new Exception("The car was updated by another user. Please reload and try again.");
         }
 
@@ -164,19 +161,20 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
-    public List<CarResponseDTO> getFilteredCars(Integer page,
-                                                Integer size,
-                                                String manufacturer,
-                                                String model,
-                                                String motor,
-                                                Integer release_year,
-                                                Float min_price,
-                                                Float max_price,
-                                                String color,
-                                                String car) {
+    @Async
+    public CompletableFuture<List<CarResponseDTO>> getFilteredCars(Integer page,
+                                                                   Integer size,
+                                                                   String manufacturer,
+                                                                   String model,
+                                                                   String motor,
+                                                                   Integer release_year,
+                                                                   Float min_price,
+                                                                   Float max_price,
+                                                                   String color,
+                                                                   String car) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Car> allCars = carRepository.findFilteredCars(pageable, manufacturer, model, motor, release_year, min_price, max_price, color, car);
-        return allCars.stream().map(this::createNewCarResponse).toList();
+        return CompletableFuture.completedFuture(allCars.stream().map(this::createNewCarResponse).toList());
     }
 
     public Integer getLength() {

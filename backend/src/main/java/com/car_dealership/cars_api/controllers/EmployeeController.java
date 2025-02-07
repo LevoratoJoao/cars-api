@@ -19,12 +19,12 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<List<EmployeeResponseDTO>> getAllEmployees() {
-        return ResponseEntity.ok().body(employeeService.getAllEmployees());
+        return employeeService.getAllEmployees().thenApply(ResponseEntity::ok).join();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponseDTO> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(employeeService.getEmployeeById(id));
+        return employeeService.getEmployeeById(id).thenApply(ResponseEntity::ok).join();
     }
 
     @PostMapping
@@ -49,7 +49,7 @@ public class EmployeeController {
                                                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd")
                                                                              LocalDate hire_date,
                                                                           @RequestParam(defaultValue = "") String phone_number) {
-    return ResponseEntity.ok().body(employeeService.getFilteredEmployees(page - 1, size, first_name, last_name, position, email, min_salary, max_salary, hire_date, phone_number));
+    return employeeService.getFilteredEmployees(page - 1, size, first_name, last_name, position, email, min_salary, max_salary, hire_date, phone_number).thenApply(ResponseEntity::ok).join();
     }
 
 }

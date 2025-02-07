@@ -15,13 +15,14 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +37,9 @@ public class SalesService {
     private @NonNull CustomerRepository customerRepository;
     private @NonNull EmployeeRepository employeeRepository;
 
-    public List<SalesResponseDTO> getAllSales() {
-        return salesRepository.findAll()
+    @Async
+    public CompletableFuture<List<SalesResponseDTO>> getAllSales() {
+        return CompletableFuture.completedFuture(salesRepository.findAll()
                 .stream()
                 .map(sale -> new SalesResponseDTO(
                         sale.getSales_id(),
@@ -46,23 +48,24 @@ public class SalesService {
                         sale.getCar(),
                         sale.getCustomer(),
                         sale.getEmployee())
-                ).toList();
+                ).toList());
     }
 
-    public SalesResponseDTO getSaleById(Integer id) {
+    @Async
+    public CompletableFuture<SalesResponseDTO> getSaleById(Integer id) {
         Optional<Sales> sale = salesRepository.findById(id);
         if (sale.isPresent()) {
-            return new SalesResponseDTO(
+            return CompletableFuture.completedFuture(new SalesResponseDTO(
                     sale.get().getSales_id(),
                     sale.get().getSale_date(),
                     sale.get().getSale_price(),
                     sale.get().getCar(),
                     sale.get().getCustomer(),
                     sale.get().getEmployee()
-            );
+            ));
         }
         System.out.println("Sale with id { " + id + " } was not found");
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     public SalesResponseDTO saveSale(SalesRequestDTO sale) {
@@ -90,22 +93,23 @@ public class SalesService {
         return new SalesResponseDTO(newSale.getSales_id(), newSale.getSale_date(), newSale.getSale_price(), newSale.getCar(), newSale.getCustomer(), newSale.getEmployee());
     }
 
-    public List<SalesResponseDTO> getFilteredSales(Integer page, Integer size, LocalDate date, Float min_price, Float max_price, String car_name, String customer_name, String employee_name) {
+    @Async
+    public CompletableFuture<List<SalesResponseDTO>> getFilteredSales(Integer page, Integer size, LocalDate date, Float min_price, Float max_price, String car_name, String customer_name, String employee_name) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         //Pageable pageable = PageRequest.of(page, size);
 
         Page<Sales> filteredSales = salesRepository.findFilteredSales(pageable, date, min_price, max_price, car_name, customer_name, employee_name);
 
-        return filteredSales.stream()
+        return CompletableFuture.completedFuture(filteredSales.stream()
                 .map(sale -> new SalesResponseDTO(
-                    sale.getSales_id(),
-                    sale.getSale_date(),
-                    sale.getSale_price(),
-                    sale.getCar(),
-                    sale.getCustomer(),
-                    sale.getEmployee()
-                )
-        ).toList();
+                                sale.getSales_id(),
+                                sale.getSale_date(),
+                                sale.getSale_price(),
+                                sale.getCar(),
+                                sale.getCustomer(),
+                                sale.getEmployee()
+                        )
+                ).toList());
     }
 
 }
