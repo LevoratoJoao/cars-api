@@ -17,7 +17,7 @@ public class CarsController {
     private final CarService carService;
 
     @GetMapping
-    public ResponseEntity<List<CarResponseDTO>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<List<CarResponseDTO>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) throws InterruptedException {
         List<CarResponseDTO> allCars = carService.getAllCars(page - 1, size);
         return ResponseEntity.ok().body(allCars);
     }
@@ -37,9 +37,9 @@ public class CarsController {
         return ResponseEntity.ok().body(carService.saveCars(carRequest));
     }
 
-    @PutMapping
-    public ResponseEntity<Car> put(@RequestBody Car carRequest) {
-        return ResponseEntity.ok().body(carService.updateCar(carRequest));
+    @PutMapping("/{id}")
+    public ResponseEntity<CarResponseDTO> put(@PathVariable Integer id, @RequestBody CarRequestDTO carRequest) {
+        return ResponseEntity.ok().body(carService.updateCar(id, carRequest));
     }
 
     @DeleteMapping("/{id}")

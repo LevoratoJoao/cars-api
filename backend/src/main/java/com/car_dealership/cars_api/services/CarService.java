@@ -17,10 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,9 +46,10 @@ public class CarService {
     }
 
     @Cacheable("cars")
-    public List<CarResponseDTO> getAllCars(int page, int size) {
+    public List<CarResponseDTO> getAllCars(int page, int size) throws InterruptedException {
         Pageable pageable = PageRequest.of(page, size);
         Page<Car> allCars = carRepository.findAll(pageable);
+        Thread.sleep(3000);
         return allCars.stream().map(this::createNewCarResponse).toList();
     }
 
@@ -115,9 +113,33 @@ public class CarService {
         return response;
     }
 
-    public Car updateCar(Car car) {
-        System.out.println(car.toString());
-        return carRepository.save(car);
+    public Set<Color> getColorsOrCreate(CarRequestDTO carRequest) {
+        return carRequest.colors().stream().map(color -> colorService
+                .getColorRepository()
+                .findByColorName(color)
+                .orElseGet(() -> {
+                    ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
+                    System.out.println("New color was added: " + newColor.name());
+                    return new Color(newColor.name());
+                })).collect(Collectors.toSet());
+    }
+
+    public CarResponseDTO updateCar(Integer carId, CarRequestDTO updateCar) {
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found"));
+
+        car.setCar_name(updateCar.car_name());
+        car.setModel(updateCar.model());
+        car.setRelease_year(updateCar.release_year());
+        car.setMotor(updateCar.motor());
+        car.setKilometers(updateCar.kilometers());
+        car.setPrice(updateCar.price());
+
+        Set<Color> colors = getColorsOrCreate(updateCar);
+        car.setColors(colors);
+
+        carRepository.save(car);
+
+        return new CarResponseDTO(car.getCar_id(), car.getCar_name(), car.getModel(), car.getRelease_year(), car.getMotor(), car.getKilometers(), car.getPrice(), new ManufacturerRequestDTO(car.getManufacturer().getManufacturer_name(), car.getManufacturer().getCountry()), car.getColors().stream().map(Color::getColor_name).collect(Collectors.toSet()));
     }
 
     public void deleteCar(Integer id) {
