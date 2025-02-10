@@ -40,6 +40,7 @@ public class CarService {
                 car.getMotor(),
                 car.getKilometers(),
                 car.getPrice(),
+                car.getSold(),
                 new ManufacturerRequestDTO(car.getManufacturer().getManufacturer_name(), car.getManufacturer().getCountry()),
                 car.getColors()
                         .stream()
@@ -111,6 +112,7 @@ public class CarService {
                     carRequest.motor(),
                     carRequest.kilometers(),
                     carRequest.price(),
+                    carRequest.sold(),
                     getManufacturerOrCreate(carRequest),
                     colors
             );
@@ -135,6 +137,7 @@ public class CarService {
     @Async
     public CompletableFuture<CarResponseDTO> updateCar(Integer carId, CarRequestDTO updateCar) throws Exception {
         try {
+            System.out.println("Executing updateCar in thread: " + Thread.currentThread().getName());
             Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found"));
 
             car.setCar_name(updateCar.car_name());
@@ -149,12 +152,25 @@ public class CarService {
 
             carRepository.save(car);
 
-            return CompletableFuture.completedFuture(new CarResponseDTO(car.getCar_id(), car.getCar_name(), car.getModel(), car.getRelease_year(), car.getMotor(), car.getKilometers(), car.getPrice(), new ManufacturerRequestDTO(car.getManufacturer().getManufacturer_name(), car.getManufacturer().getCountry()), car.getColors().stream().map(Color::getColor_name).collect(Collectors.toSet())));
-
+            return CompletableFuture.completedFuture(
+                    new CarResponseDTO(car.getCar_id(),
+                            car.getCar_name(),
+                            car.getModel(),
+                            car.getRelease_year(),
+                            car.getMotor(),
+                            car.getKilometers(),
+                            car.getPrice(),
+                            car.getSold(),
+                            new ManufacturerRequestDTO(
+                                    car.getManufacturer().getManufacturer_name(),
+                                    car.getManufacturer().getCountry()
+                            ),
+                            car.getColors().stream().map(Color::getColor_name).collect(Collectors.toSet())
+                    )
+            );
         } catch (Exception e) {
             throw new Exception("The car was updated by another user. Please reload and try again.");
         }
-
     }
 
     public void deleteCar(Integer id) {

@@ -27,6 +27,7 @@ public class Car {
     private String motor;
     private Float kilometers;
     private Float price;
+    private Boolean sold = false;
 
     @ManyToOne
     @JoinColumn(name = "manufacturer")
@@ -43,18 +44,19 @@ public class Car {
     @Version
     private Integer version;
 
-    public Car(String car_name, String model, Integer release_year, String motor, Float kilometers, Float price, Manufacturer manufacturer, Set<Color> colors) {
+    public Car(String car_name, String model, Integer release_year, String motor, Float kilometers, Float price, Boolean sold, Manufacturer manufacturer, Set<Color> colors) {
         this.car_name = car_name;
         this.model = model;
         this.release_year = release_year;
         this.motor = motor;
         this.kilometers = kilometers;
         this.price = price;
+        this.sold = sold;
         this.manufacturer = manufacturer;
         this.colors = colors;
     }
 
-    public Car(Integer id, String car_name, String model, Integer release_year, String motor, Float kilometers, Float price, Manufacturer manufacturer, Set<Color> colors) {
+    public Car(Integer id, String car_name, String model, Integer release_year, String motor, Float kilometers, Float price, Boolean sold, Manufacturer manufacturer, Set<Color> colors) {
         this.car_id = id;
         this.car_name = car_name;
         this.model = model;
@@ -62,6 +64,7 @@ public class Car {
         this.motor = motor;
         this.kilometers = kilometers;
         this.price = price;
+        this.sold = sold;
         this.manufacturer = manufacturer;
         this.colors = colors;
     }

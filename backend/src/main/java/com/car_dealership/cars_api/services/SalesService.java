@@ -1,12 +1,10 @@
 package com.car_dealership.cars_api.services;
 
+import com.car_dealership.cars_api.dto.car.CarRequestDTO;
+import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.dto.sales.SalesRequestDTO;
 import com.car_dealership.cars_api.dto.sales.SalesResponseDTO;
-import com.car_dealership.cars_api.models.Car;
-import com.car_dealership.cars_api.models.Customer;
-import com.car_dealership.cars_api.models.Employee;
-import com.car_dealership.cars_api.models.Sales;
-import com.car_dealership.cars_api.repositories.CarRepository;
+import com.car_dealership.cars_api.models.*;
 import com.car_dealership.cars_api.repositories.CustomerRepository;
 import com.car_dealership.cars_api.repositories.EmployeeRepository;
 import com.car_dealership.cars_api.repositories.SalesRepository;
@@ -18,11 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class SalesService {
     private @NonNull SalesRepository salesRepository;
 
     // TODO: Remove all these repositories and make the getById methods return the actual model
-    private @NonNull CarRepository carRepository;
+    private @NonNull CarService carService;
     private @NonNull CustomerRepository customerRepository;
     private @NonNull EmployeeRepository employeeRepository;
 
@@ -68,29 +69,68 @@ public class SalesService {
         return CompletableFuture.completedFuture(null);
     }
 
-    public SalesResponseDTO saveSale(SalesRequestDTO sale) {
-
-        Optional<Car> car = carRepository.findById(sale.car_id());
-        if (car.isEmpty()) {
-            System.out.println("Car with id { " + sale.car_id() + " } was not found");
-            return null;
-        }
-
+    @Async
+    @Transactional
+    public CompletableFuture<SalesResponseDTO> saveSale(SalesRequestDTO sale)  {
         Optional<Employee> employee = employeeRepository.findById(sale.employee_id());
         if (employee.isEmpty()) {
             System.out.println("Employee with id { " + sale.employee_id() + " } was not found");
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
 
         Optional<Customer> customer = customerRepository.findById(sale.customer_id());
         if (customer.isEmpty()) {
             System.out.println("Customer with id { " + sale.customer_id() + " } was not found");
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
 
-        Sales newSale = new Sales(sale.date(), sale.sale_price(), customer.get(), car.get(), employee.get());
-        salesRepository.save(newSale);
-        return new SalesResponseDTO(newSale.getSales_id(), newSale.getSale_date(), newSale.getSale_price(), newSale.getCar(), newSale.getCustomer(), newSale.getEmployee());
+        try {
+            CompletableFuture<CarResponseDTO> car = carService.getCarById(sale.car_id());
+            CarResponseDTO carResponseDTO = car.get();
+
+            if (carResponseDTO.sold()) {
+                System.out.println("Car with id { " + sale.car_id() + " } was already sold");
+                return CompletableFuture.completedFuture(null);
+            }
+
+            Car updatedCar = new Car(carResponseDTO.car_id(),
+                    carResponseDTO.car_name(),
+                    carResponseDTO.model(),
+                    carResponseDTO.release_year(),
+                    carResponseDTO.motor(),
+                    carResponseDTO.kilometers(),
+                    carResponseDTO.price(),
+                    true,
+                    new Manufacturer(
+                            carResponseDTO.manufacturer().man_name(),
+                            carResponseDTO.manufacturer().country()
+                    ),
+                    carResponseDTO.colors()
+                            .stream()
+                            .map(Color::new).collect(Collectors.toSet()));
+
+            Sales newSale = new Sales(sale.date(), sale.sale_price(), customer.get(), updatedCar, employee.get());
+            salesRepository.save(newSale);
+
+            carService.updateCar(carResponseDTO.car_id(), new CarRequestDTO(
+                    carResponseDTO.car_name(),
+                    carResponseDTO.model(),
+                    carResponseDTO.release_year(),
+                    carResponseDTO.motor(),
+                    carResponseDTO.kilometers(),
+                    carResponseDTO.price(),
+                    true,
+                    carResponseDTO.manufacturer(),
+                    carResponseDTO.colors())
+            );
+
+            return CompletableFuture.completedFuture(new SalesResponseDTO(newSale.getSales_id(), newSale.getSale_date(), newSale.getSale_price(), newSale.getCar(), newSale.getCustomer(), newSale.getEmployee()));
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Car with id { " + sale.car_id() + " } was not found");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return CompletableFuture.completedFuture(null);
     }
 
     @Async

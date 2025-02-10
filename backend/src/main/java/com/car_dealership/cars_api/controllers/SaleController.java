@@ -30,7 +30,7 @@ public class SaleController {
 
     @PostMapping
     public ResponseEntity<SalesResponseDTO> post(@RequestBody SalesRequestDTO salesRequest) {
-        return ResponseEntity.ok().body(salesService.saveSale(salesRequest));
+        return salesService.saveSale(salesRequest).thenApply(ResponseEntity::ok).join();
     }
 
     @GetMapping("/filter")

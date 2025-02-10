@@ -97,7 +97,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public CompletableFuture<Customer> updateCustomer(Integer customerId, CustomerRequestDTO updateCustomer) throws Exception {
+    public CompletableFuture<CustomerResponseDTO> updateCustomer(Integer customerId, CustomerRequestDTO updateCustomer) throws Exception {
         try {
             Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new NoSuchElementException("Customer not found"));
 
@@ -108,7 +108,13 @@ public class CustomerService {
 
             Customer savedCustomer = customerRepository.save(customer);
 
-            return CompletableFuture.completedFuture(savedCustomer);
+            return CompletableFuture.completedFuture(new CustomerResponseDTO(
+                    savedCustomer.getCustomer_id(),
+                    savedCustomer.getFirst_name(),
+                    savedCustomer.getLast_name(),
+                    savedCustomer.getPhone_number(),
+                    savedCustomer.getEmail()
+            ));
         } catch (Exception e) {
             throw new Exception("The customer was updated by another user. Please reload and try again.");
         }

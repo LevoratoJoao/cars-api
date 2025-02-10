@@ -46,4 +46,9 @@ public class CustomerController {
                                                                           @RequestParam(defaultValue = "") String phone_number) {
         return customerService.getFilteredCustomers(page - 1, size, first_name, last_name, email, phone_number).thenApply(ResponseEntity::ok).join();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> put(@PathVariable Integer id, @RequestBody CustomerRequestDTO customerRequest) throws Exception {
+        return customerService.updateCustomer(id, customerRequest).thenApply(ResponseEntity::ok).join();
+    }
 }
