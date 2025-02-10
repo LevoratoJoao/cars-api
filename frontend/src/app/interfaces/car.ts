@@ -8,6 +8,7 @@ export interface Car {
     motor: string,
     kilometers: number,
     price: number,
+    sold: boolean,
     manufacturer: Manufacturer,
     colors: string[]
 }

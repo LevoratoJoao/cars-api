@@ -19,6 +19,7 @@ import { PaginationComponent } from "../pagination/pagination.component";
 export class CarComponent {
   private _carsList: Car[] = [];
 
+
   manuList: Manufacturer[] = [];
   colorList: Color[] = [];
 
@@ -79,37 +80,6 @@ export class CarComponent {
     this.currentPage = page;
     this.fetchData();
   }
-
-  // goToPreviousPage(): void {
-  //   if (this.currentPage > 0) {
-  //     this.currentPage--;
-  //     this.fetchData();
-  //   }
-  // }
-
-  // goToNextPage(): void {
-  //   if (this.currentPage < this.totalPages) {
-  //     this.currentPage++;
-  //     this.fetchData();
-  //   }
-  // }
-
-  // goToPage(event: Event): void {
-  //   const page = event.target as HTMLInputElement;
-  //   const pageNumber = parseInt(page.value, 10);
-  //   if (pageNumber && pageNumber >= 1 && pageNumber <= this.totalPages && pageNumber !== this.currentPage) {
-  //     this.currentPage = pageNumber;
-  //     this.fetchData();
-  //   }
-  // }
-
-  // get pageNumbers(): number[] {
-  //   return Array.from({ length: this.totalPages }, (_, index) => index + 1);
-  // }
-
-  // get totalPages(): number {
-  //   return Math.ceil(this.totalItems / this.sizeOfPage);
-  // }
 
   public get carsList(): Car[] {
     return this._carsList;

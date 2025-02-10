@@ -1,5 +1,8 @@
 <li class="list-group-item clearfix d-flex rounded-2 border border-danger" id="car-details">
+    <p *ngIf="car.sold" class="link-danger" id="car-sold">SOLD</p>
+
     <p class="p-0 m-0 flex-grow-1">{{ car.manufacturer.man_name }} {{ car.car_name }} {{ car.motor }} {{ car.release_year }}</p>
+
     <button type="button" class="btn btn-danger" data-bs-toggle="collapse" attr.data-bs-target="#collapse{{car.car_id}}" aria-expanded="false" attr.aria-controls="collapse{{car.car_id}}">Details</button>
 </li>
 <div class="collapse" id="collapse{{car.car_id}}">
