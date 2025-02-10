@@ -103,25 +103,19 @@ public class CarService {
 
     public CarResponseDTO saveCar(CarRequestDTO carRequest) {
         Set<Color> colors = getColorsOrCreate(carRequest);
-        Optional<Car> carExists = carRepository.findByCarName(carRequest.car_name());
-        if (carExists.isEmpty()) {
-            Car newCar = new Car(
-                    carRequest.car_name(),
-                    carRequest.model(),
-                    carRequest.release_year(),
-                    carRequest.motor(),
-                    carRequest.kilometers(),
-                    carRequest.price(),
-                    carRequest.sold(),
-                    getManufacturerOrCreate(carRequest),
-                    colors
-            );
-            carRepository.save(newCar);
-            return createNewCarResponse(newCar);
-        }
-        carExists.get().setColors(colors);
-        Car car = carRepository.save(carExists.get());
-        return createNewCarResponse(carExists.get());
+        Car newCar = new Car(
+                carRequest.car_name(),
+                carRequest.model(),
+                carRequest.release_year(),
+                carRequest.motor(),
+                carRequest.kilometers(),
+                carRequest.price(),
+                carRequest.sold(),
+                getManufacturerOrCreate(carRequest),
+                colors
+        );
+        carRepository.save(newCar);
+        return createNewCarResponse(newCar);
     }
 
 

@@ -5,6 +5,7 @@ import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.dto.sales.SalesRequestDTO;
 import com.car_dealership.cars_api.dto.sales.SalesResponseDTO;
 import com.car_dealership.cars_api.models.*;
+import com.car_dealership.cars_api.repositories.CarRepository;
 import com.car_dealership.cars_api.repositories.CustomerRepository;
 import com.car_dealership.cars_api.repositories.EmployeeRepository;
 import com.car_dealership.cars_api.repositories.SalesRepository;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -34,7 +36,7 @@ public class SalesService {
     private @NonNull SalesRepository salesRepository;
 
     // TODO: Remove all these repositories and make the getById methods return the actual model
-    private @NonNull CarService carService;
+    private @NonNull CarRepository carRepository;
     private @NonNull CustomerRepository customerRepository;
     private @NonNull EmployeeRepository employeeRepository;
 
@@ -85,52 +87,24 @@ public class SalesService {
         }
 
         try {
-            CompletableFuture<CarResponseDTO> car = carService.getCarById(sale.car_id());
-            CarResponseDTO carResponseDTO = car.get();
+            Car car = carRepository.findById(sale.car_id()).orElseThrow(() -> new NoSuchElementException("Car with id { " + sale.car_id() + " } was not found"));
 
-            if (carResponseDTO.sold()) {
+            if (car.getSold()) {
                 System.out.println("Car with id { " + sale.car_id() + " } was already sold");
                 return CompletableFuture.completedFuture(null);
             }
 
-            Car updatedCar = new Car(carResponseDTO.car_id(),
-                    carResponseDTO.car_name(),
-                    carResponseDTO.model(),
-                    carResponseDTO.release_year(),
-                    carResponseDTO.motor(),
-                    carResponseDTO.kilometers(),
-                    carResponseDTO.price(),
-                    true,
-                    new Manufacturer(
-                            carResponseDTO.manufacturer().man_name(),
-                            carResponseDTO.manufacturer().country()
-                    ),
-                    carResponseDTO.colors()
-                            .stream()
-                            .map(Color::new).collect(Collectors.toSet()));
+            car.setSold(true);
+            carRepository.save(car);
 
-            Sales newSale = new Sales(sale.date(), sale.sale_price(), customer.get(), updatedCar, employee.get());
+            Sales newSale = new Sales(sale.date(), sale.sale_price(), customer.get(), car, employee.get());
+
             salesRepository.save(newSale);
 
-            carService.updateCar(carResponseDTO.car_id(), new CarRequestDTO(
-                    carResponseDTO.car_name(),
-                    carResponseDTO.model(),
-                    carResponseDTO.release_year(),
-                    carResponseDTO.motor(),
-                    carResponseDTO.kilometers(),
-                    carResponseDTO.price(),
-                    true,
-                    carResponseDTO.manufacturer(),
-                    carResponseDTO.colors())
-            );
-
             return CompletableFuture.completedFuture(new SalesResponseDTO(newSale.getSales_id(), newSale.getSale_date(), newSale.getSale_price(), newSale.getCar(), newSale.getCustomer(), newSale.getEmployee()));
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("Car with id { " + sale.car_id() + " } was not found");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return CompletableFuture.completedFuture(null);
     }
 
     @Async

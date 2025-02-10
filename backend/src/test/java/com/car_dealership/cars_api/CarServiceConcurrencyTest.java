@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -70,21 +69,19 @@ public class CarServiceConcurrencyTest {
         Car finalCar = carRepository.findById(2).orElseThrow(() -> new RuntimeException("Car not found"));
         assertNotNull(finalCar);
         // Assert that the final car details are one of the expected states
-        assertTrue(finalCar.getPrice() == 19000.00 || finalCar.getPrice() == 18000.00);
+        assertTrue(finalCar.getPrice() == 19000 || finalCar.getPrice() == 18000);
     }
 
     @Test
     @Transactional
     public void testConcurrentSaleCar() throws InterruptedException {
+        final Integer[] saleId = {null};
 
         // Create two threads simulating two customers updating the same car
         Thread customer1 = new Thread(() -> {
             try {
                 CompletableFuture<SalesResponseDTO> saleResponse = salesService.saveSale(new SalesRequestDTO(LocalDate.parse("2025-02-09"), 19000.00f, 2, 1, 1));
-                saleResponse.thenApply(sale -> {
-                    System.out.println("Sale completed: " + sale);
-                    return sale;
-                });
+                saleId[0] = saleResponse.get().id();
             } catch (Exception e) {
                 System.out.println("Customer 1: " + e.getMessage());
             }
@@ -92,7 +89,8 @@ public class CarServiceConcurrencyTest {
 
         Thread customer2 = new Thread(() -> {
             try {
-                salesService.saveSale(new SalesRequestDTO(LocalDate.parse("2025-02-09"), 19000.00f, 2, 1, 3));
+                CompletableFuture<SalesResponseDTO> saleResponse = salesService.saveSale(new SalesRequestDTO(LocalDate.parse("2025-02-09"), 19000.00f, 2, 2, 3));
+                saleId[0] = saleResponse.get().id();
             } catch (Exception e) {
                 System.out.println("Customer 2: " + e.getMessage());
             }
@@ -107,10 +105,10 @@ public class CarServiceConcurrencyTest {
         customer2.join();
 
         // Verify the final state of the sale
-        Sales sale = salesRepository.findById(1).orElseThrow(() -> new RuntimeException("Sale not found"));
+        Sales sale = salesRepository.findById(saleId[0]).orElseThrow(() -> new RuntimeException("Sale not found"));
         assertNotNull(sale);
         // Assert that the final car details are one of the expected states
         assertTrue(sale.getCar().getSold());
-        assertTrue(sale.getCustomer().getCustomer_id() == 1 || sale.getCustomer().getCustomer_id() == 3);
+        assertTrue(sale.getEmployee().getEmployee_id() == 1 || sale.getEmployee().getEmployee_id() == 3);
     }
 }
