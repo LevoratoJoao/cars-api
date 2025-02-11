@@ -452,6 +452,7 @@ The Front-end is a Angular application that consumes the API through HTTP reques
 - [x] Add pagination
 - [x] Add filters
 - [x] Add async and concurrency control
+- [x] Add security with authentication and authorization (backend)
+- [ ] Add security with authentication and authorization (frontend)
 - [ ] Add tests
-- [ ] Add security with authentication and authorization
 - [ ] Add Docker
