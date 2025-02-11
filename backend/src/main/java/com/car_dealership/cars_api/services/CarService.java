@@ -56,7 +56,7 @@ public class CarService {
         System.out.println("Executing getAllCars in thread: " + Thread.currentThread().getName());
         Pageable pageable = PageRequest.of(page, size);
         Page<Car> allCars = carRepository.findAll(pageable);
-        Thread.sleep(2000);
+        //Thread.sleep(2000);
         System.out.println("All cars were found");
         return CompletableFuture.completedFuture(allCars.stream().map(this::createNewCarResponse).toList());
     }
