@@ -1,12 +1,14 @@
 package com.car_dealership.cars_api.config;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.car_dealership.cars_api.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -15,15 +17,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -76,15 +74,20 @@ public class WebConfig implements WebMvcConfigurer, AsyncConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/cars").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/sales").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/cars/").hasRole("SELLER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/sales").hasRole("SELLER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/cars").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/employees").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/customers").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/employees").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/sales").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/error").permitAll()  // Permit access to /error
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -97,7 +100,7 @@ public class WebConfig implements WebMvcConfigurer, AsyncConfigurer {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 }

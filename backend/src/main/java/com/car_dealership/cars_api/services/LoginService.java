@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 public class LoginService {
     private final UserRepository userRepository;
 
-    public RegisterRequestDTO register(RegisterRequestDTO registerRequestDTO) {
+    public String register(RegisterRequestDTO registerRequestDTO) {
         if (this.userRepository.findByLogin(registerRequestDTO.login()) != null) {
             return null;
         }
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerRequestDTO.password());
-        User newUser = new User(registerRequestDTO.login(), registerRequestDTO.password(), registerRequestDTO.role());
+        User newUser = new User(registerRequestDTO.login(), encryptedPassword, registerRequestDTO.role());
 
         this.userRepository.save(newUser);
 
-        return registerRequestDTO;
+        return "User " + registerRequestDTO.login() + " created";
     }
 }

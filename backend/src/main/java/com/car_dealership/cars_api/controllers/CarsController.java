@@ -21,7 +21,8 @@ public class CarsController {
     @GetMapping
     public CompletableFuture<ResponseEntity<List<CarResponseDTO>>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) throws InterruptedException {
         CompletableFuture<List<CarResponseDTO>> allCars = carService.getAllCars(page - 1, size);
-        return allCars.thenApply(ResponseEntity::ok);
+        System.out.println("All cars were found 2");
+        return allCars.thenApply(ResponseEntity::ok).exceptionally(ex -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
 
     @GetMapping("/{id}")
