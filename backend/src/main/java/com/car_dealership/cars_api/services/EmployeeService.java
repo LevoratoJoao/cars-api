@@ -28,7 +28,9 @@ public class EmployeeService {
 
     @Async
     public CompletableFuture<List<EmployeeResponseDTO>> getAllEmployees() {
+        System.out.println("Executing getAllEmployees in thread: " + Thread.currentThread().getName());
         List<Employee> allEmployees = employeeRepository.findAll();
+        System.out.println("All employees were found in thread: " + Thread.currentThread().getName());
         return CompletableFuture.completedFuture(allEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList());
     }
 

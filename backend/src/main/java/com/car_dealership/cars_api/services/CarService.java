@@ -56,8 +56,8 @@ public class CarService {
         System.out.println("Executing getAllCars in thread: " + Thread.currentThread().getName());
         Pageable pageable = PageRequest.of(page, size);
         Page<Car> allCars = carRepository.findAll(pageable);
-        Thread.sleep(2000);
-        System.out.println("All cars were found");
+        Thread.sleep(10000);
+        System.out.println("All cars were found in thread: " + Thread.currentThread().getName());
         return CompletableFuture.completedFuture(allCars.stream().map(this::createNewCarResponse).toList());
     }
 
@@ -66,12 +66,12 @@ public class CarService {
         System.out.println("Executing getCarById in thread: " + Thread.currentThread().getName());
 
         Optional<Car> carExists = carRepository.findById(id);
-        //Thread.sleep(1000);
+        Thread.sleep(2000);
         if (carExists.isPresent()) {
-            System.out.println("Car with id { " + id + " } was found");
+            System.out.println("Car with id { " + id + " } was found in thread: " + Thread.currentThread().getName());
             return CompletableFuture.completedFuture(createNewCarResponse(carExists.get()));
         }
-        System.out.println("Car with id { " + id + " } was not found");
+        System.out.println("Car with id { " + id + " } was not found in thread: " + Thread.currentThread().getName());
 
         return CompletableFuture.completedFuture(null);
     }
