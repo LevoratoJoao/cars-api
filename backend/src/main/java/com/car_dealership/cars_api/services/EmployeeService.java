@@ -25,7 +25,9 @@ public class EmployeeService {
     private @NonNull EmployeeRepository employeeRepository;
 
     public List<EmployeeResponseDTO> getAllEmployees() {
+        System.out.println("Getting all employees in Thread: " + Thread.currentThread().getName());
         List<Employee> allEmployees = employeeRepository.findAll();
+        System.out.println("All employees were found in Thread: " + Thread.currentThread().getName());
         return allEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList();
     }
 

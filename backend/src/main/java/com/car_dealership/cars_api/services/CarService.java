@@ -47,18 +47,21 @@ public class CarService {
 
     @Cacheable("cars")
     public List<CarResponseDTO> getAllCars(int page, int size) throws InterruptedException {
+        System.out.println("Getting all cars in Thread: " + Thread.currentThread().getName());
         Pageable pageable = PageRequest.of(page, size);
         Page<Car> allCars = carRepository.findAll(pageable);
-        Thread.sleep(3000);
+        Thread.sleep(4000);
+        System.out.println("All cars were found in Thread: " + Thread.currentThread().getName());
         return allCars.stream().map(this::createNewCarResponse).toList();
     }
 
     public CarResponseDTO getCarById(Integer id) {
+        System.out.println("Getting car with id { " + id + " } in Thread: " + Thread.currentThread().getName());
         Optional<Car> carExists = carRepository.findById(id);
         if (carExists.isPresent()) {
             return createNewCarResponse(carExists.get());
         }
-        System.out.println("Car with id { " + id + " } was not found");
+        System.out.println("Car with id { " + id + " } was not found ");
         return null;
     }
 
