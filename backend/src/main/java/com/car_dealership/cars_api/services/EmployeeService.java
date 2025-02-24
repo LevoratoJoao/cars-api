@@ -8,14 +8,16 @@ import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -24,20 +26,20 @@ import java.util.Optional;
 public class EmployeeService {
     private @NonNull EmployeeRepository employeeRepository;
 
-    public List<EmployeeResponseDTO> getAllEmployees() {
-        System.out.println("Getting all employees in Thread: " + Thread.currentThread().getName());
+    @Async
+    public CompletableFuture<List<EmployeeResponseDTO>> getAllEmployees() {
         List<Employee> allEmployees = employeeRepository.findAll();
-        System.out.println("All employees were found in Thread: " + Thread.currentThread().getName());
-        return allEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList();
+        return CompletableFuture.completedFuture(allEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList());
     }
 
-    public EmployeeResponseDTO getEmployeeById(Integer id) {
+    @Async
+    public CompletableFuture<EmployeeResponseDTO> getEmployeeById(Integer id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if (employee.isPresent()) {
-            return new EmployeeResponseDTO(employee.get().getEmployee_id(), employee.get().getFirst_name(), employee.get().getLast_name(), employee.get().getPosition(), employee.get().getSalary(), employee.get().getHire_date(), employee.get().getPhone_number(), employee.get().getEmail());
+            return CompletableFuture.completedFuture(new EmployeeResponseDTO(employee.get().getEmployee_id(), employee.get().getFirst_name(), employee.get().getLast_name(), employee.get().getPosition(), employee.get().getSalary(), employee.get().getHire_date(), employee.get().getPhone_number(), employee.get().getEmail()));
         }
         System.out.println("Employee with id { " + id + " } was not found");
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     public EmployeeResponseDTO saveEmployee(EmployeeRequestDTO employee) {
@@ -54,9 +56,33 @@ public class EmployeeService {
         return customersResponse;
     }
 
-    public List<EmployeeResponseDTO> getFilteredEmployees(Integer page, Integer size, String first_name, String last_name, String position, String email, Float min_salary, Float max_salary, LocalDate hire_date, String phone_number) {
+    @Async
+    public CompletableFuture<List<EmployeeResponseDTO>> getFilteredEmployees(Integer page, Integer size, String first_name, String last_name, String position, String email, Float min_salary, Float max_salary, LocalDate hire_date, String phone_number) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Employee> filteredEmployees = employeeRepository.findFilteredEmployees(pageable, first_name, last_name, position, email, min_salary, max_salary, hire_date, phone_number);
-        return filteredEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList();
+        return CompletableFuture.completedFuture(filteredEmployees.stream().map(employee -> new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail())).toList());
+    }
+
+
+    @Transactional
+    @Async
+    public CompletableFuture<EmployeeResponseDTO> updateEmployee(Integer employeeId, EmployeeRequestDTO updateEmployee) {
+        try {
+            Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new NoSuchElementException("Employee not found"));
+
+            employee.setFirst_name(updateEmployee.first_name());
+            employee.setLast_name(updateEmployee.last_name());
+            employee.setPosition(updateEmployee.position());
+            employee.setSalary(updateEmployee.salary());
+            employee.setHire_date(updateEmployee.hire_date());
+            employee.setPhone_number(updateEmployee.phone_number());
+            employee.setEmail(updateEmployee.email());
+
+            employeeRepository.save(employee);
+
+            return CompletableFuture.completedFuture(new EmployeeResponseDTO(employee.getEmployee_id(), employee.getFirst_name(), employee.getLast_name(), employee.getPosition(), employee.getSalary(), employee.getHire_date(), employee.getPhone_number(), employee.getEmail()));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("The employee was updated by another user. Please reload and try again.");
+        }
     }
 }

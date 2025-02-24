@@ -20,17 +20,17 @@ public class SaleController {
 
     @GetMapping
     public ResponseEntity<List<SalesResponseDTO>> getAllSales() {
-        return ResponseEntity.ok().body(salesService.getAllSales());
+        return salesService.getAllSales().thenApply(ResponseEntity::ok).join();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SalesResponseDTO> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(salesService.getSaleById(id));
+        return salesService.getSaleById(id).thenApply(ResponseEntity::ok).join();
     }
 
     @PostMapping
     public ResponseEntity<SalesResponseDTO> post(@RequestBody SalesRequestDTO salesRequest) {
-        return ResponseEntity.ok().body(salesService.saveSale(salesRequest));
+        return salesService.saveSale(salesRequest).thenApply(ResponseEntity::ok).join();
     }
 
     @GetMapping("/filter")
@@ -42,6 +42,6 @@ public class SaleController {
                                                       @RequestParam(defaultValue = "") String car_name,
                                                       @RequestParam(defaultValue = "") String customer_name,
                                                       @RequestParam(defaultValue = "") String employee_name) {
-        return ResponseEntity.ok().body(salesService.getFilteredSales(page - 1, size, date, min_price, max_price, car_name, customer_name, employee_name));
+        return salesService.getFilteredSales(page - 1, size, date, min_price, max_price, car_name, customer_name, employee_name).thenApply(ResponseEntity::ok).join();
     }
 }

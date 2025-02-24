@@ -1,14 +1,15 @@
 package com.car_dealership.cars_api.controllers;
 
-import com.car_dealership.cars_api.models.Car;
 import com.car_dealership.cars_api.dto.car.CarRequestDTO;
 import com.car_dealership.cars_api.dto.car.CarResponseDTO;
 import com.car_dealership.cars_api.services.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,14 +18,15 @@ public class CarsController {
     private final CarService carService;
 
     @GetMapping
-    public ResponseEntity<List<CarResponseDTO>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) throws InterruptedException {
-        List<CarResponseDTO> allCars = carService.getAllCars(page - 1, size);
-        return ResponseEntity.ok().body(allCars);
+    public CompletableFuture<ResponseEntity<List<CarResponseDTO>>> getAllCars(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) throws InterruptedException {
+        CompletableFuture<List<CarResponseDTO>> allCars = carService.getAllCars(page - 1, size);
+        System.out.println("All cars were found 2");
+        return allCars.thenApply(ResponseEntity::ok).exceptionally(ex -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CarResponseDTO> getCarById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(carService.getCarById(id));
+    public CompletableFuture<ResponseEntity<CarResponseDTO>> getCarById(@PathVariable Integer id) throws InterruptedException {
+        return carService.getCarById(id).thenApply(ResponseEntity::ok);
     }
 
     @PostMapping
@@ -38,8 +40,8 @@ public class CarsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CarResponseDTO> put(@PathVariable Integer id, @RequestBody CarRequestDTO carRequest) {
-        return ResponseEntity.ok().body(carService.updateCar(id, carRequest));
+    public CompletableFuture<ResponseEntity<CarResponseDTO>> put(@PathVariable Integer id, @RequestBody CarRequestDTO carRequest) throws Exception {
+        return carService.updateCar(id, carRequest).thenApply(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{id}")
@@ -49,7 +51,7 @@ public class CarsController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<CarResponseDTO>> getCarsByFilter(@RequestParam(defaultValue = "1") int page,
+    public CompletableFuture<ResponseEntity<List<CarResponseDTO>>> getCarsByFilter(@RequestParam(defaultValue = "1") int page,
                                                                 @RequestParam(defaultValue = "10") int size,
                                                                 @RequestParam(defaultValue = "") String manufacturer,
                                                                 @RequestParam(defaultValue = "") String model,

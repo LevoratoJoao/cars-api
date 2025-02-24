@@ -8,10 +8,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -21,21 +23,23 @@ public class ColorService {
 
     private @NonNull ColorRepository colorRepository;
 
-    public List<ColorResponseDTO> getAllColors() {
+    @Async
+    public CompletableFuture<List<ColorResponseDTO>> getAllColors() {
         List<Color> allColors = colorRepository.findAll();
-        return allColors.stream().map(color -> new ColorResponseDTO(color.getColor_id(), color.getColor_name())).toList();
+        return CompletableFuture.completedFuture(allColors.stream().map(color -> new ColorResponseDTO(color.getColor_id(), color.getColor_name())).toList());
     }
 
-    public ColorResponseDTO getColorById(Integer id) {
+    @Async
+    public CompletableFuture<ColorResponseDTO> getColorById(Integer id) {
         Optional<Color> colorExists = colorRepository.findById(id);
         if (colorExists.isPresent()) {
-            return new ColorResponseDTO(
+            return CompletableFuture.completedFuture(new ColorResponseDTO(
                     colorExists.get().getColor_id(),
                     colorExists.get().getColor_name()
-            );
+            ));
         }
         System.out.println("Color with id { " + id + " } was not found");
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     public ColorResponseDTO saveColor(ColorRequestDTO color) {

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,12 +19,12 @@ public class CustomerController {
 
     @GetMapping
     public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
-        return ResponseEntity.ok().body(customerService.getAllCustomers());
+        return customerService.getAllCustomers().thenApply(ResponseEntity::ok).join();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> get(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(customerService.getCustomerById(id));
+        return customerService.getCustomerById(id).thenApply(ResponseEntity::ok).join();
     }
 
     @PostMapping
@@ -43,6 +44,11 @@ public class CustomerController {
                                                                           @RequestParam(defaultValue = "") String last_name,
                                                                           @RequestParam(defaultValue = "") String email,
                                                                           @RequestParam(defaultValue = "") String phone_number) {
-        return ResponseEntity.ok().body(customerService.getFilteredCustomers(page - 1, size, first_name, last_name, email, phone_number));
+        return customerService.getFilteredCustomers(page - 1, size, first_name, last_name, email, phone_number).thenApply(ResponseEntity::ok).join();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> put(@PathVariable Integer id, @RequestBody CustomerRequestDTO customerRequest) throws Exception {
+        return customerService.updateCustomer(id, customerRequest).thenApply(ResponseEntity::ok).join();
     }
 }

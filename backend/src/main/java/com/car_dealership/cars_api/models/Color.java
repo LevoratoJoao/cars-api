@@ -3,6 +3,8 @@ package com.car_dealership.cars_api.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org. hibernate.annotations.CascadeType;
 
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class Color {
     }
 
     @ManyToMany(mappedBy = "colors")
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
     @JsonIgnore
     private List<Car> cars;
 }

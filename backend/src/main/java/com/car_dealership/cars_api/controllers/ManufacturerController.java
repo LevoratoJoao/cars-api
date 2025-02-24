@@ -19,12 +19,12 @@ public class ManufacturerController {
 
     @GetMapping()
     public ResponseEntity<List<ManufacturerResponseDTO>> getAllManufacturers() {
-        return ResponseEntity.ok().body(manufacturerService.getAllManufacturers());
+        return manufacturerService.getAllManufacturers().thenApply(ResponseEntity::ok).join();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ManufacturerResponseDTO> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(manufacturerService.getManufacturerById(id));
+        return manufacturerService.getManufacturerById(id).thenApply(ResponseEntity::ok).join();
     }
 
     @PostMapping

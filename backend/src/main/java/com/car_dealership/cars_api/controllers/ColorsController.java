@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,12 +19,12 @@ public class ColorsController {
 
     @GetMapping
     public ResponseEntity<List<ColorResponseDTO>> get() {
-        return ResponseEntity.ok().body(colorService.getAllColors());
+        return colorService.getAllColors().thenApply(ResponseEntity::ok).join();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ColorResponseDTO> get(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(colorService.getColorById(id));
+        return colorService.getColorById(id).thenApply(ResponseEntity::ok).join();
     }
 
     @PostMapping

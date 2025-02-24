@@ -29,6 +29,9 @@ public class Employee {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Version
+    private Integer version;
+
     public Employee(String first_name, String last_name, String position, Float salary, LocalDate hire_date, String phone_number, String email) {
         this.first_name = first_name;
         this.last_name = last_name;

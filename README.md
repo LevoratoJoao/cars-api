@@ -24,7 +24,7 @@ The API has the following endpoints:
 ```json
 [
 	{
-		"car_id": 2,
+	    "car_id": 2,
 		"car_name": "Toyota Corolla",
 		"model": "Sedan",
 		"release_year": 2020,
@@ -451,7 +451,8 @@ The Front-end is a Angular application that consumes the API through HTTP reques
 
 - [x] Add pagination
 - [x] Add filters
+- [x] Add async and concurrency control
+- [x] Add security with authentication and authorization (backend)
+- [ ] Add security with authentication and authorization (frontend)
 - [ ] Add tests
-- [ ] Add security with authentication and authorization
-- [ ] Add async and queue processing
 - [ ] Add Docker
