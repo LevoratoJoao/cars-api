@@ -41,8 +41,8 @@ public class CarServiceConcurrencyTest {
         // Create two threads simulating two customers updating the same car
         Thread customer1 = new Thread(() -> {
             try {
-                CarRequestDTO updatedCar = new CarRequestDTO( "Toyota Corolla", "Sedan", 2020, "V4", 20000.0f, 19000.00f, false, new ManufacturerRequestDTO("Toyota", "Japan"), Set.of("Red", "White"));
-                carService.updateCar(2, updatedCar);
+                CarRequestDTO updatedCar = new CarRequestDTO( "Toyota Corolla", "Sedan", 2020, "V4", 15000.5f, 19000.00f, false, new ManufacturerRequestDTO("Toyota", "Japan"), Set.of("Red", "White"));
+                carService.updateCar(1, updatedCar);
             } catch (Exception e) {
                 System.out.println("Customer 1: " + e.getMessage());
             }
@@ -51,7 +51,7 @@ public class CarServiceConcurrencyTest {
         Thread customer2 = new Thread(() -> {
             try {
                 CarRequestDTO updatedCar = new CarRequestDTO("Toyota Corolla", "Sedan", 2020, "V4", 15000.5f, 18000.00f, false, new ManufacturerRequestDTO("Toyota", "Japan"), Set.of("Red", "White"));
-                carService.updateCar(2, updatedCar);
+                carService.updateCar(1, updatedCar);
             } catch (Exception e) {
                 System.out.println("Customer 2: " + e.getMessage());
             }
@@ -66,10 +66,10 @@ public class CarServiceConcurrencyTest {
         customer2.join();
 
         // Verify the final state of the car
-        Car finalCar = carRepository.findById(2).orElseThrow(() -> new RuntimeException("Car not found"));
+        Car finalCar = carRepository.findById(1).orElseThrow(() -> new RuntimeException("Car not found"));
         assertNotNull(finalCar);
         // Assert that the final car details are one of the expected states
-        assertTrue(finalCar.getPrice() == 19000 || finalCar.getPrice() == 18000);
+        assertTrue(finalCar.getPrice() == 19000.00 || finalCar.getPrice() == 18000.00);
     }
 
     @Test
