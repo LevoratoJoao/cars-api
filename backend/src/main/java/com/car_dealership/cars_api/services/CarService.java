@@ -94,10 +94,9 @@ public class CarService {
                 .getColorRepository()
                 .findByColorName(color)
                 .orElseGet(() -> {
-                    ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
-                    System.out.println("New color was added: " + newColor.name());
-                    Color col = new Color(newColor.name());
-                    return col;
+                    Color newColor = colorService.saveColor(new ColorRequestDTO(color));
+                    System.out.println("New color was added: " + newColor.getColor_name());
+                    return newColor;
                 })
         ).collect(Collectors.toSet());
     }
@@ -115,6 +114,7 @@ public class CarService {
                 getManufacturerOrCreate(carRequest),
                 colors
         );
+        System.out.println("New car was added: " + newCar);
         carRepository.save(newCar);
         return createNewCarResponse(newCar);
     }

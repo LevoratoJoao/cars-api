@@ -42,9 +42,9 @@ public class ColorService {
         return CompletableFuture.completedFuture(null);
     }
 
-    public ColorResponseDTO saveColor(ColorRequestDTO color) {
+    public Color saveColor(ColorRequestDTO color) {
         Color newColor = new Color(color.name());
         colorRepository.save(newColor);
-        return new ColorResponseDTO(newColor.getColor_id(), newColor.getColor_name());
+        return newColor;
     }
 }
