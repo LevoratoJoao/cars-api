@@ -21,7 +21,8 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
             "c.motor, " +
             "c.kilometers, " +
             "c.price, " +
-            "c.manufacturer " +
+            "c.manufacturer, " +
+            "c.sold " +
             "from car c " +
                    "join manufacturer m on c.manufacturer = m.manufacturer_id " +
                    "join car_colors cc on cc.car_id = c.car_id " +
@@ -32,7 +33,8 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
                    "and (:release_year = 0 or c.release_year = %:release_year%) " +
                    "and (c.price >= :min_price and c.price <= :max_price) " +
                    "and (:color = '' or cl.color_name like %:color%) " +
-                   "and (:car_name = '' or c.car_name like %:car_name%) "
+                   "and (:car_name = '' or c.car_name like %:car_name%) " +
+                   "and (c.sold = :sold) "
             , nativeQuery = true)
     Page<Car> findFilteredCars(Pageable pageable,
                                @Param("manufacturer_name") String manufacturer_name,
@@ -42,6 +44,7 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
                                @Param("min_price") Float min_price,
                                @Param("max_price") Float max_price,
                                @Param("color") String color,
-                               @Param("car_name") String car_name
+                               @Param("car_name") String car_name,
+                               @Param("sold") Boolean sold
     );
 }

@@ -60,8 +60,9 @@ public class CarsController {
                                                                 @RequestParam(defaultValue = "0") Float min_price,
                                                                 @RequestParam(defaultValue = "10000000") Float max_price,
                                                                 @RequestParam(defaultValue = "") String color,
-                                                                @RequestParam(defaultValue = "") String car) {
-        return ResponseEntity.ok().body(carService.getFilteredCars(page - 1, size, manufacturer, model, motor, release_year, min_price, max_price, color, car));
+                                                                @RequestParam(defaultValue = "") String car,
+                                                                @RequestParam(defaultValue = "false") String sold) {
+        return carService.getFilteredCars(page - 1, size, manufacturer, model, motor, release_year, min_price, max_price, color, car, Boolean.valueOf(sold)).thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/length")

@@ -12,7 +12,6 @@ import java.util.Set;
 @Entity // Creates a table of this clas
 @Setter
 @Getter
-@ToString // @Data already creates Getter, Setter and ToString so we can use that too
 @NoArgsConstructor
 @AllArgsConstructor
 public class Car {

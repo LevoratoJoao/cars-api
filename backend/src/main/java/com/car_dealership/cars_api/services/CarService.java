@@ -78,10 +78,10 @@ public class CarService {
     public Manufacturer getManufacturerOrCreate(CarRequestDTO carRequest) {
         return manufacturerService.
                 getManufacturerRepository()
-                .findByManName(carRequest.manufacturer().man_name())
+                .findByManName(carRequest.manufacturer().manufacturer_name())
                 .orElseGet(() -> {
                     Manufacturer newManufacturer = manufacturerService.saveManufacturer(new ManufacturerRequestDTO(
-                            carRequest.manufacturer().man_name(),
+                            carRequest.manufacturer().manufacturer_name(),
                             carRequest.manufacturer().country()
                     ));
                     System.out.println("New manufacturer was added: " + newManufacturer.getManufacturer_name());
@@ -96,8 +96,10 @@ public class CarService {
                 .orElseGet(() -> {
                     ColorResponseDTO newColor = colorService.saveColor(new ColorRequestDTO(color));
                     System.out.println("New color was added: " + newColor.name());
-                    return new Color(newColor.name());
-                })).collect(Collectors.toSet());
+                    Color col = new Color(newColor.name());
+                    return col;
+                })
+        ).collect(Collectors.toSet());
     }
 
     public CarResponseDTO saveCar(CarRequestDTO carRequest) {
@@ -179,9 +181,11 @@ public class CarService {
                                                                    Float min_price,
                                                                    Float max_price,
                                                                    String color,
-                                                                   String car) {
+                                                                   String car,
+                                                                   Boolean sold) {
+        System.out.println(sold);
         Pageable pageable = PageRequest.of(page, size);
-        Page<Car> allCars = carRepository.findFilteredCars(pageable, manufacturer, model, motor, release_year, min_price, max_price, color, car);
+        Page<Car> allCars = carRepository.findFilteredCars(pageable, manufacturer, model, motor, release_year, min_price, max_price, color, car, sold);
         return CompletableFuture.completedFuture(allCars.stream().map(this::createNewCarResponse).toList());
     }
 

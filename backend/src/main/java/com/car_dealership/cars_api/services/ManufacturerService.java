@@ -23,7 +23,7 @@ public class ManufacturerService {
     private @NonNull ManufacturerRepository manufacturerRepository;
 
     public Manufacturer saveManufacturer(ManufacturerRequestDTO manufacturerRequest) {
-        Manufacturer newManufacturer = new Manufacturer(manufacturerRequest.man_name(), manufacturerRequest.country());
+        Manufacturer newManufacturer = new Manufacturer(manufacturerRequest.manufacturer_name(), manufacturerRequest.country());
         manufacturerRepository.save(newManufacturer);
         return newManufacturer;
     }

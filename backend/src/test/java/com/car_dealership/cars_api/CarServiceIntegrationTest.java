@@ -38,12 +38,6 @@ public class CarServiceIntegrationTest {
         // Wait for the async task to complete and get the result
         List<CarResponseDTO> allCars = allCarsFuture.join();
         CarResponseDTO carById = carByIdFuture.join();
-    @Test
-    public void testAsyncMethods() throws Exception {
-        final List[] allCar = new List[1];
-        final EmployeeResponseDTO[] employee = new EmployeeResponseDTO[1];
-        final CarResponseDTO[] carById = new CarResponseDTO[1];
-
 
         assertNotNull(allCars);
         assertFalse(allCars.isEmpty());
